@@ -68,7 +68,7 @@ class BookController {
 
 This is the return when we access `localhost:8080/swagger-ui`
 
-<p align="center"> <img src="assets/swagger-v2.jpg" width=400/> </p>
+<p align="center"> <img src="../assets/swagger-v2.jpg" width=400/> </p>
 
 If we are using `version 3+`, we also have access to openapi spec, by accessing:
 ``http://localhost:8080/v3/api-docs``.

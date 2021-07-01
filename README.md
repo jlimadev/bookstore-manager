@@ -17,13 +17,18 @@ mvn spring-boot:run
 - Setup project with Spring Initializr
 - Add swagger (open-api v3) and configurations
 - Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
+- Configure Profiles
 
 ### OpenAPI Configurations
 
 we can configure OpenApi/swagger in multiple ways. In this project we have two configuration to it.
 
-- [Springfox](./docs/SpringfoxConfiguration.md)
-- [Springdoc](./docs/SpringdocConfiguration.md)
+- [Springfox](docs/openapi/SpringfoxConfiguration.md)
+- [Springdoc](docs/openapi/SpringdocConfiguration.md)
+
+### Profiles
+We can use multiple profiles in our application. Here is a document with more explanation.
+- [Profiles](docs/Profiles.md)
 
 # References
 
