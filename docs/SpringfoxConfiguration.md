@@ -20,6 +20,7 @@ Configuration class should expose a `@Bean` that creates the swagger configurati
 ```kotlin
 @Configuration
 @EnableSwagger2
+@EnableOpenApi
 class SwaggerConfig {
     @Bean
     fun api(): Docket {
@@ -32,7 +33,6 @@ class SwaggerConfig {
     }
 
     private fun buildApiInfo(): ApiInfo {
-
         return ApiInfoBuilder()
             .title(API_TITLE)
             .description(API_DESCRIPTION)
@@ -71,6 +71,10 @@ If we are using `version 3+`, we also have access to openapi spec, by accessing:
 
 This URL is Configurable on application.properties:
 ```properties
+springfox.documentation.swagger-ui.base-url=/springfox/swagger-ui
+springfox.documentation.swagger-ui.path=/springfox/swagger-ui
+springfox.documentation.swagger.v2.path=/springfox/v2/api-docs
+# http://localhost:8080/springfox/v2/api-docs
 springfox.documentation.open-api.v3.path=/springfox/v3/api-docs
 # http://localhost:8080/springfox/v3/api-docs
 ```
