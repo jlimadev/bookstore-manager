@@ -2,6 +2,16 @@ spring:
   profiles:
     active: devl
 
+management:
+  endpoint:
+    shutdown:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: info,auditevents,beans,configprops
+        exclude: loggers
+
 springdoc:
   packages-to-scan: com.jlima.bookstoremanager
   swagger-ui:
