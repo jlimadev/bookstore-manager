@@ -19,6 +19,7 @@ mvn spring-boot:run
 - Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
 - Configure Profiles
 - Configure actuator
+- Configure TravisCI
 
 ### OpenAPI Configurations
 
@@ -28,17 +29,27 @@ we can configure OpenApi/swagger in multiple ways. In this project we have two c
 - [Springdoc](docs/openapi/SpringdocConfiguration.md)
 
 ### Profiles
+
 We can use multiple profiles in our application. Here is a document with more explanation.
+
 - [Profiles](docs/Profiles.md)
 
 ### Actuator
 
 We can monitor our service by using [Actuator](docs/Actuator.md)
 
+### CI/CD
+
+Following the best practices, we use CI/CD processes in this project. [Read more here](docs/CICD.md). 
+
+For CI, we use TravisCI and for CD, we use Heroku.
+
 ### Database Model
+
 <p align="center"> <img src="docs/assets/db-model.jpg" width=590 alt="database"></p>
 
 ### Rest Endpoints
+
 - Authors
     - POST [/api/v1/authors]
     - GET (all) [/api/v1/authors]
