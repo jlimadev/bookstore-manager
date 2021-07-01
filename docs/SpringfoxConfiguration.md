@@ -49,6 +49,10 @@ Finally, we can annotate our Controller with the most descriptive data to our ap
 - `@ApiResponses(value = [])`
 
 ```kotlin
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
+
 @RestController
 @RequestMapping("/api/v1/books")
 class BookController {
