@@ -18,6 +18,7 @@ mvn spring-boot:run
 - Add swagger (open-api v3) and configurations
 - Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
 - Configure Profiles
+- Configure actuator
 
 ### OpenAPI Configurations
 
@@ -29,6 +30,10 @@ we can configure OpenApi/swagger in multiple ways. In this project we have two c
 ### Profiles
 We can use multiple profiles in our application. Here is a document with more explanation.
 - [Profiles](docs/Profiles.md)
+
+### Actuator
+
+We can monitor our service by using [Actuator](docs/Actuator.md)
 
 ### Database Model
 <p align="center"> <img src="docs/assets/db-model.jpg" width=590 alt="database"></p>
