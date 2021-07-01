@@ -1,8 +1,9 @@
 dist: xenial
 language: java
 sudo: false
-jdk: openjdk11
 install: true
+jdk:
+  - openjdk11
 cache:
   directories:
-    - @HOME/.m2
+    - $HOME/.m2
