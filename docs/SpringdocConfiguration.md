@@ -20,6 +20,10 @@ We need first install `springdoc-openapi-ui` (and for kotlin `springdoc-openapi-
 We can also, create the configurations to the api, in a configuration file
 
 ```kotlin
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.info.Contact
+import io.swagger.v3.oas.annotations.info.Info
+
 @OpenAPIDefinition(
     info = Info(
         title = "Bookstore Manager API",
