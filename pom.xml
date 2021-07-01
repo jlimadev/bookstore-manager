@@ -17,6 +17,7 @@
         <java.version>11</java.version>
         <kotlin.version>1.5.20</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
+        <springdoc-version>1.5.9</springdoc-version>
     </properties>
     <dependencies>
         <dependency>
@@ -65,9 +66,17 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>${springfox.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-kotlin</artifactId>
+            <version>${springdoc-version}</version>
+        </dependency>
     </dependencies>
-
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
