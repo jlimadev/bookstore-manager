@@ -47,6 +47,23 @@ Finally, in order to scan the right packages, we can set it, in our application.
 springdoc.packagesToScan=com.jlima.bookstoremanager
 ```
 
+```kotlin
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+
+@RestController
+@RequestMapping("/api/v1/books")
+class BookController {
+    @Operation(summary = "This method returns a hello world")
+    @ApiResponses(value = [ApiResponse(responseCode = "200", description = "Success method return")])
+    @GetMapping
+    fun hello(): ResponseEntity<String> {
+        return ResponseEntity("Hello world!", HttpStatus.OK)
+    }
+}
+```
+
 References:
 - https://www.baeldung.com/spring-rest-openapi-documentation
 - https://reflectoring.io/spring-boot-springdoc/
