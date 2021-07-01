@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: devl
+
+springdoc:
+  packages-to-scan: com.jlima.bookstoremanager
+  swagger-ui:
+    path: /springdoc/swagger-ui
+  api-docs:
+    path: /springdoc/v3/api-docs
+
+springfox:
+  documentation:
+    swagger-ui:
+      path: /springfox/swagger-ui
+    swagger:
+      v2:
+        path: /springfox/v2/api-docs
+    open-api:
+      v3:
+        path: /springfox/v3/api-docs
