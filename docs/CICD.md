@@ -34,3 +34,9 @@ java.runtime.version=11
 ```
 
 Now Heroku is able to match the version.
+
+We can also set the default profile to run on Heroku, by adding the following property on system.properties file:
+
+```properties
+
+```
