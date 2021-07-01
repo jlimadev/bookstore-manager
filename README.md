@@ -30,6 +30,36 @@ we can configure OpenApi/swagger in multiple ways. In this project we have two c
 We can use multiple profiles in our application. Here is a document with more explanation.
 - [Profiles](docs/Profiles.md)
 
+### Database Model
+<p align="center"> <img src="docs/assets/db-model.jpg" width=590 alt="database"></p>
+
+### Rest Endpoints
+- Authors
+    - POST [/api/v1/authors]
+    - GET (all) [/api/v1/authors]
+    - GET (one) [/api/v1/authors/{name}]
+    - PUT [/api/v1/authors/{id}]
+    - DELETE [/api/v1/authors/{id}]
+- Publishers
+    - POST [/api/v1/publishers]
+    - GET (all) [/api/v1/publishers]
+    - GET (one) [/api/v1/publishers/{id}]
+    - PUT [/api/v1/publishers/{id}]
+    - DELETE [/api/v1/publishers/{id}]
+- Users
+    - POST [/api/v1/users]
+    - POST [/authenticate]
+    - GET (all) [/api/v1/users]
+    - GET (one) [/api/v1/users/{id}]
+    - PUT [/api/v1/users/{id}]
+    - DELETE [/api/v1/users/{id}]
+- Books
+    - POST [/api/v1/books]
+    - GET (all) [/api/v1/books]
+    - GET (one) [/api/v1/books/{id}]
+    - PUT [/api/v1/books/{id}]
+    - DELETE [/api/v1/books/{id}]
+
 # References
 
 - [What is REST](https://www.codecademy.com/articles/what-is-rest)
