@@ -1,1 +1,1 @@
-web: java -jar build/libs/bookstore-manager.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/bookstore-manager.jar

@@ -68,8 +68,12 @@ spring.profiles.active=prod
 Using maven these configs should be enough. If you are using gradle, you have to add a Procfile with the following content
 
 ```properties
-web: java $JAVA_OPTS -jar bookstore-manager.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/bookstore-manager.jar
 ```
+[How to](https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku) Deploy gradle app in Heroku.
+
+---
+### Bonus
 
 To change the default app name, on build.gradle, you can add:
 ```groovy
