@@ -8,6 +8,7 @@ class BookstoreManagerApplicationTests {
 
     @Test
     fun contextLoads() {
+        // not implemented yet
     }
 
 }

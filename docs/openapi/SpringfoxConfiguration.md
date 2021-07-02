@@ -14,6 +14,10 @@ We need to add the springfox and springfox-swagger-ui.
 </dependency>
 ```
 
+```groovy
+implementation("io.springfox:springfox-boot-starter:${springfoxVersion}")
+```
+
 After that, we need to create a configuration class annotated with `@Configuration` and `@EnableSwagger2`. This
 Configuration class should expose a `@Bean` that creates the swagger configuration/docket. such as:
 

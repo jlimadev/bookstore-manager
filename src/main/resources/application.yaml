@@ -4,10 +4,7 @@ spring:
 
 info:
   app:
-    name: @project.name@
-    groupId: @project.groupId@
-    artifactId: @project.artifactId@
-    version: @project.version@
+    custom: custom value from application.yaml
 
 management:
   endpoint:
@@ -16,7 +13,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: info,auditevents,beans,configprops
+        include: health,info,auditevents,beans,configprops
         exclude: loggers
 
 springdoc:

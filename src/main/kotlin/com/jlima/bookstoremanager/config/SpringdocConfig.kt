@@ -13,5 +13,4 @@ import io.swagger.v3.oas.annotations.info.Info
         contact = Contact(name = "Jonathan Lima", url = "https://github.com/jlimadev", email = "jlima.dev@gmail.com")
     ),
 )
-class SpringdocConfig {
-}
+class SpringdocConfig

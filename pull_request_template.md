@@ -10,5 +10,5 @@ Describe in this area what was developed.
 
 ## Running the app
 ```shell
-mvn spring-boot:run
+gradle bootRun
 ```
