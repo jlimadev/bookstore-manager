@@ -68,7 +68,7 @@ spring.profiles.active=prod
 Using maven these configs should be enough. If you are using gradle, you have to add a Procfile with the following content
 
 ```properties
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/bookstore-manager.jar
+java -jar -Dspring.profiles.active=prod -Dserver.port=$PORT $JAVA_OPTS build/libs/bookstore-manager.jar
 ```
 [How to](https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku) Deploy gradle app in Heroku.
 

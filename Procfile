@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/bookstore-manager.jar
+web: java -jar -Dspring.profiles.active=prod -Dserver.port=$PORT $JAVA_OPTS build/libs/bookstore-manager.jar
