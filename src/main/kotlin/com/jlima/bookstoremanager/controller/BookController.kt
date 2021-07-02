@@ -17,6 +17,6 @@ class BookController {
     @ApiResponses(value = [ApiResponse(code = 200, message = "Success method return")])
     @GetMapping
     fun hello(): ResponseEntity<String> {
-        return ResponseEntity("Hello world!", HttpStatus.OK)
+        return ResponseEntity("Hello world, new version!", HttpStatus.OK)
     }
 }
