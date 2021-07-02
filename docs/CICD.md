@@ -64,3 +64,18 @@ We can also set the default profile to run on Heroku, by adding the following pr
 ```properties
 spring.profiles.active=prod
 ```
+
+Using maven these configs should be enough. If you are using gradle, you have to add a Procfile with the following content
+
+```properties
+web: java $JAVA_OPTS -jar bookstore-manager.jar
+```
+
+To change the default app name, on build.gradle, you can add:
+```groovy
+tasks {
+    bootJar {
+        archiveFileName.set("bookstore-manager.jar")
+    }
+}
+```

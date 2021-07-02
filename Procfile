@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar bookstore-manager.jar
+web: java -jar build/libs/bookstore-manager.jar
