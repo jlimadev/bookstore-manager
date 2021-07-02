@@ -22,7 +22,10 @@ mvn spring-boot:run
 - Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
 - Configure Profiles
 - Configure actuator
-- Configure TravisCI
+- CI/CD
+  - Configure TravisCI
+  - Configure Heroku
+  - Configure SonarCloud
 
 ### OpenAPI Configurations
 
