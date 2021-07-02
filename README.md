@@ -2,7 +2,7 @@
 
 This Bookstore Manager project purpose is to deliver a REST API to a bookstore.
 
-- This project has been developed with Springboot and Kotlin. The package manager is Maven.
+- This project has been developed with Springboot and Kotlin. The package manager is Gradle.
 - This project uses TravisCI and Heroku for CI/CD 
   
   [![Build Status](https://travis-ci.com/jlimadev/bookstore-manager.svg?branch=master)](https://travis-ci.com/jlimadev/bookstore-manager)

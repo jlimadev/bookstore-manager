@@ -17,6 +17,11 @@ We need first install `springdoc-openapi-ui` (and for kotlin `springdoc-openapi-
 </dependency>
 ```
 
+```groovy
+implementation("org.springdoc:springdoc-openapi-ui:${springdocVersion}")
+    implementation("org.springdoc:springdoc-openapi-kotlin:${springdocVersion}")
+```
+
 We can also, create the configurations to the api, in a configuration file
 
 ```kotlin

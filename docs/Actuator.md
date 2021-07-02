@@ -7,8 +7,11 @@ By default, the only enable endpoint is /actuator/health and /actuator/info.
 
 We only need to add the following dependency.
 
-```xml
+```groovy
+implementation("org.springframework.boot:spring-boot-starter-actuator")
+```
 
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-actuator</artifactId>
@@ -40,7 +43,7 @@ we can customize it in different ways:
 
 - By configurations inside application.properties | .yaml
 
-To access maven properties we can use double at, such as `@project.myProp@`
+To access maven properties we can use double at, such as `@project.myProp@` or just a custom property as follows:
 
 ```properties
 info.app.name=@project.name@
@@ -49,6 +52,14 @@ info.app.name.artifactId=@project.artifactId@
 info.app.name.version=@project.version@
 info.custom.prop=value
 info.banana=value
+```
+
+If we are using gradle, we can activate a configuration in our build.gradle 
+This will expose application data in /info endpoint
+```groovy
+springBoot {
+    buildInfo()
+}
 ```
 
 ### By creating configuration classes:
@@ -68,19 +79,15 @@ import org.springframework.stereotype.Component
 @Component
 @EndpointWebExtension(endpoint = InfoEndpoint::class)
 class ActuatorCustomEndpoint(
-    private val infoEndpoint: InfoEndpoint
+    private val infoEndpoint: InfoEndpoint,
+    private val buildProperties: BuildProperties
 ) {
     @ReadOperation
     fun info(): WebEndpointResponse<Map<String, Any>> {
         val info: Map<String, Any> = this.infoEndpoint.info()
-        val status = getStatus(info)
         val customInfo = HashMap<String, Any>(info)
-        customInfo["customInfo"] = "customValue"
-        return WebEndpointResponse(customInfo, status)
-    }
-
-    private fun getStatus(status: Map<String, Any>): Int {
-        return 200
+        customInfo["actuatorConfig"] = "custom configuration from actuator config file"
+        return WebEndpointResponse(customInfo, 200)
     }
 }
 ```

@@ -12,11 +12,14 @@ To do it, we need to add this `.travis.yml` file with the following content:
 dist: xenial
 language: java
 sudo: false
-jdk: openjdk11
 install: true
+jdk:
+  - openjdk11
 cache:
   directories:
-    - @HOME/.m2
+    - $HOME/.m2
+before_install:
+  - chmod +x mvnw
 ```
 
 ## Heroku
@@ -38,5 +41,5 @@ Now Heroku is able to match the version.
 We can also set the default profile to run on Heroku, by adding the following property on system.properties file:
 
 ```properties
-
+spring.profiles.active=prod
 ```
