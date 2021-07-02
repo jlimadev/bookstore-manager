@@ -65,3 +65,16 @@ processResources {
 springBoot {
     buildInfo()
 }
+
+task stage(type: Copy, dependsOn: [clean, build]) {
+    from jar.archiveFile
+    into project.rootDir
+    rename {
+        'bookstore-manager.jar'
+    }
+}
+stage.mustRunAfter(clean)
+
+clean {
+    project.file('bookstore-manager.jar').delete()
+}
