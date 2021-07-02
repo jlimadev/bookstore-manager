@@ -12,7 +12,7 @@ This Bookstore Manager project purpose is to deliver a REST API to a bookstore.
 You can run the project by using the maven command
 
 ```shell
-mvn spring-boot:run
+gradle bootRun
 ```
 
 ## Development Process
