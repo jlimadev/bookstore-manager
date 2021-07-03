@@ -1,11 +1,12 @@
 # Bookstore Manager
+[![Build Status](https://travis-ci.com/jlimadev/bookstore-manager.svg?branch=master)](https://travis-ci.com/jlimadev/bookstore-manager)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jlimadev_bookstore-manager&metric=alert_status)](https://sonarcloud.io/dashboard?id=jlimadev_bookstore-manager)
 
 This Bookstore Manager project purpose is to deliver a REST API to a bookstore.
 
 - This project has been developed with Springboot and Kotlin. The package manager is Gradle.
-- This project uses TravisCI and Heroku for CI/CD 
-  
-  [![Build Status](https://travis-ci.com/jlimadev/bookstore-manager.svg?branch=master)](https://travis-ci.com/jlimadev/bookstore-manager)
+- This project uses TravisCI and Heroku for CI/CD
+- This project has CI Integrated code analysis with SonarCloud
 
 ## Running the project
 
@@ -13,6 +14,8 @@ You can run the project by using the maven command
 
 ```shell
 gradle bootRun
+# OR
+./gradlew bootRun
 ```
 
 ## Development Process
@@ -23,6 +26,9 @@ gradle bootRun
 - Configure Profiles
 - Configure actuator
 - Configure TravisCI
+- Add KTLint
+- Add Jacoco
+- Configure SonarCloud with TravisCI
 
 ### OpenAPI Configurations
 
@@ -46,6 +52,8 @@ We can monitor our service by using [Actuator](docs/Actuator.md)
 Following the best practices, we use CI/CD processes in this project. [Read more here](docs/CICD.md). 
 
 For CI, we use TravisCI and for CD, we use Heroku.
+
+For Code Analysis we use SonarCloud.
 
 ### Database Model
 

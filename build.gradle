@@ -8,6 +8,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3"
     }
 }
 
@@ -19,6 +20,7 @@ plugins {
     id 'jacoco'
     id "org.barfuin.gradle.jacocolog" version "1.2.4"
     id "org.jlleitschuh.gradle.ktlint" version "10.0.0"
+    id "org.sonarqube" version "3.3"
 }
 
 repositories {
@@ -32,6 +34,7 @@ apply plugin: 'jacoco'
 apply plugin: 'org.barfuin.gradle.jacocolog'
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
+apply plugin: "org.sonarqube"
 
 group = "com.jlima"
 version = "0.0.1-SNAPSHOT"
@@ -71,19 +74,31 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
-        'com/jlima/bookstoremanager/config/**',
-        'com/jlima/bookstoremanager/**/exception/**',
-        'com/jlima/bookstoremanager/**/entity/**',
-        'com/jlima/bookstoremanager/**/dto/**',
-        'com/jlima/bookstoremanager/**/repository/**'
+        '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
+        '**/com/jlima/bookstoremanager/config/**',
+        '**/com/jlima/bookstoremanager/**/exception/**',
+        '**/com/jlima/bookstoremanager/**/entity/**',
+        '**/com/jlima/bookstoremanager/**/dto/**',
+        '**/com/jlima/bookstoremanager/**/repository/**'
 ]
 
 jacocoTestReport {
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+    }
+
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: packagesToExcludeOnCoverage)
         }))
     }
+
+    doLast {
+        println("See report file:\\${project.rootDir}/build/reports/jacoco/test/html/index.html")
+    }
+
     // tests are required to run before generating the report
     dependsOn test
 }
@@ -102,4 +117,14 @@ tasks {
 
 ktlint {
     version = "0.40.0"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "Bookstore Manager"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "jlima"
+        property "sonar.projectKey", "jlimadev_bookstore-manager"
+        property "sonar.coverage.exclusions", packagesToExcludeOnCoverage
+    }
 }
