@@ -10,5 +10,4 @@ class BookstoreManagerApplicationTests {
     fun contextLoads() {
         // not implemented yet
     }
-
 }
