@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
     }
 }
 
@@ -15,6 +16,9 @@ plugins {
     id 'io.spring.dependency-management' version "1.0.11.RELEASE"
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
     id "org.jetbrains.kotlin.plugin.spring" version "$kotlinVersion"
+    id 'jacoco'
+    id "org.barfuin.gradle.jacocolog" version "1.2.4"
+    id "org.jlleitschuh.gradle.ktlint" version "10.0.0"
 }
 
 repositories {
@@ -24,6 +28,10 @@ repositories {
 apply plugin: 'kotlin'
 apply plugin: "kotlin-spring"
 apply plugin: "kotlin-jpa"
+apply plugin: 'jacoco'
+apply plugin: 'org.barfuin.gradle.jacocolog'
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
 
 group = "com.jlima"
 version = "0.0.1-SNAPSHOT"
@@ -54,20 +62,44 @@ compileKotlin {
 
 test {
     useJUnitPlatform()
+    // report is always generated after tests run
+    finalizedBy jacocoTestReport
 }
 
-processResources {
-    filesMatching("application.properties") {
-        expand( project.properties )
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+def packagesToExcludeOnCoverage = [
+        'com/jlima/bookstoremanager/config/**',
+        'com/jlima/bookstoremanager/**/exception/**',
+        'com/jlima/bookstoremanager/**/entity/**',
+        'com/jlima/bookstoremanager/**/dto/**',
+        'com/jlima/bookstoremanager/**/repository/**'
+]
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: packagesToExcludeOnCoverage)
+        }))
     }
+    // tests are required to run before generating the report
+    dependsOn test
 }
 
+// add to /actuator/info information about the app
 springBoot {
     buildInfo()
 }
 
+// renames the generated jar file
 tasks {
     bootJar {
         archiveFileName.set("bookstore-manager.jar")
     }
+}
+
+ktlint {
+    version = "0.40.0"
 }
