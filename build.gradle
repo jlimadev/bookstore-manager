@@ -74,12 +74,12 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
-        'com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
-        'com/jlima/bookstoremanager/config/**',
-        'com/jlima/bookstoremanager/**/exception/**',
-        'com/jlima/bookstoremanager/**/entity/**',
-        'com/jlima/bookstoremanager/**/dto/**',
-        'com/jlima/bookstoremanager/**/repository/**'
+        '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
+        '**/com/jlima/bookstoremanager/config/**',
+        '**/com/jlima/bookstoremanager/**/exception/**',
+        '**/com/jlima/bookstoremanager/**/entity/**',
+        '**/com/jlima/bookstoremanager/**/dto/**',
+        '**/com/jlima/bookstoremanager/**/repository/**'
 ]
 
 jacocoTestReport {
@@ -125,5 +125,6 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.organization", "jlima"
         property "sonar.projectKey", "jlimadev_bookstore-manager"
+        property "sonar.coverage.exclusions", packagesToExcludeOnCoverage
     }
 }

@@ -26,12 +26,12 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
-        'com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
-        'com/jlima/bookstoremanager/config/**',
-        'com/jlima/bookstoremanager/**/exception/**',
-        'com/jlima/bookstoremanager/**/entity/**',
-        'com/jlima/bookstoremanager/**/dto/**',
-        'com/jlima/bookstoremanager/**/repository/**'
+        '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
+        '**/com/jlima/bookstoremanager/config/**',
+        '**/com/jlima/bookstoremanager/**/exception/**',
+        '**/com/jlima/bookstoremanager/**/entity/**',
+        '**/com/jlima/bookstoremanager/**/dto/**',
+        '**/com/jlima/bookstoremanager/**/repository/**'
 ]
 
 jacocoTestReport {
@@ -102,7 +102,7 @@ Automatic Analysis in our SonarCloud configurations.
 
 > Administration > Analysis Method > SonarCloud Automatic Analysis [OFF]
 
-- [Configuring SonarCloud with Travis](https://community.sonarsource.com/t/how-to-configure-upload-coverage-reports-to-sonarcloud-io/24618)
+- [Configuring SonarCloud with Travis](https://asus-aics.github.io/DeveloperGuide/pages/020_sonar_cloud/)
 - [Official Docs](https://plugins.gradle.org/plugin/org.sonarqube)
 - [Sample Repository](https://github.com/SonarSource/sq-com_example_java-gradle-travis)
 
@@ -126,15 +126,28 @@ plugins {
 
 apply plugin: "org.sonarqube"
 
+// This packages to exclude will apply to sonar and jacoco
+def packagesToExcludeOnCoverage = [
+        '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
+        '**/com/jlima/bookstoremanager/config/**',
+        '**/com/jlima/bookstoremanager/**/exception/**',
+        '**/com/jlima/bookstoremanager/**/entity/**',
+        '**/com/jlima/bookstoremanager/**/dto/**',
+        '**/com/jlima/bookstoremanager/**/repository/**'
+]
+
 sonarqube {
     properties {
-        property "sonar.projectName", "Bookstore Manager"
-        property "sonar.projectKey", "com.jlima.bookstoremanager"
+        property "sonar.projectName", "MyProjectName"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "MyOrganization"
+        property "sonar.projectKey", "MyProjectKey"
+        property "sonar.coverage.exclusions", packagesToExcludeOnCoverage
     }
 }
 ```
 
-Now we are able to run `./gradlew sonarqube`.
+Now we are able to run `./gradlew sonarqube -Dsonar.login=mytoken`.
 
 To run alongside with TravisCI, we must add a few configurations to it.
 
