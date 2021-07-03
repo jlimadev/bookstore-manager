@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
     }
 }
 
@@ -17,6 +18,7 @@ plugins {
     id "org.jetbrains.kotlin.plugin.spring" version "$kotlinVersion"
     id 'jacoco'
     id "org.barfuin.gradle.jacocolog" version "1.2.4"
+    id "org.jlleitschuh.gradle.ktlint" version "10.0.0"
 }
 
 repositories {
@@ -28,6 +30,8 @@ apply plugin: "kotlin-spring"
 apply plugin: "kotlin-jpa"
 apply plugin: 'jacoco'
 apply plugin: 'org.barfuin.gradle.jacocolog'
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
 
 group = "com.jlima"
 version = "0.0.1-SNAPSHOT"
@@ -94,4 +98,8 @@ tasks {
     bootJar {
         archiveFileName.set("bookstore-manager.jar")
     }
+}
+
+ktlint {
+    version = "0.40.0"
 }
