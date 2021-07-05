@@ -44,6 +44,17 @@ ${POSTGRES_USER:-postgres}
 
 Finally, after all the configurations, we can run ``docker-compose up -d``
 
+Now we have to configure the application to connect to the database, in our application.properties (or yaml):
+
+```yaml
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+```
+
 ## H2
 
 - We are going to use an in-memory database to run the CI Process.
