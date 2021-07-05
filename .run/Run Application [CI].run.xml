@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Application [CI]" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="jlima-bookstore-manager.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.jlima.bookstoremanager.BookstoreManagerApplication" />
+    <option name="ACTIVE_PROFILES" value="ci" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateResources" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
