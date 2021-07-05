@@ -7,4 +7,5 @@
     <include file="db/changelog/v1.0.0/db.001-enable-uuid.sql"/>
     <include file="db/changelog/v1.0.0/db.002-create-schemas.sql"/>
     <include file="db/changelog/v1.0.0/db.003-create-tables.sql"/>
+    <include file="db/changelog/v1.0.0/db.004-add-auditable-columns.sql"/>
 </databaseChangeLog>
