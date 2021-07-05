@@ -6,7 +6,11 @@ spring:
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
-
+  liquibase:
+    change-log: classpath:db/master.xml
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
+    user: ${LIQUIBASE_DATABASE_USERNAME:postgres}
+    password: ${LIQUIBASE_DATABASE_PASSWORD:postgres}
 info:
   app:
     custom: custom value from application.yaml
