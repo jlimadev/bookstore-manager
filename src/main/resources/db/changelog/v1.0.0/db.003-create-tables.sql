@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS domain.publisher(
 CREATE TABLE IF NOT EXISTS domain.user(
     id          UUID DEFAULT uuid_generate_v4(),
     name        VARCHAR(255),
-    gender      VARCHAR(100),
+    gender      VARCHAR(6),
     birth_date  DATE,
     email       VARCHAR(100),
     password    VARCHAR(100),
