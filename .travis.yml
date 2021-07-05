@@ -23,3 +23,5 @@ addons:
 script:
   - ./gradlew jacocoTestReport
   - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY
+env:
+  - SPRING_PROFILES_ACTIVE=ci

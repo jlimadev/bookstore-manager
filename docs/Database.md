@@ -5,6 +5,11 @@ can have one just to CI part as well.
 
 We are going to manage the database using liquibase.
 
+- Postgres Local [With docker-compose]
+- Postgres Prod [On Heroku]
+- Liquibase to manage the migrations [to Local and Prod]
+- H2 Database for CI process
+
 ## Postgres
 
 - We are going to use a local postgres to run in development env.
@@ -69,6 +74,24 @@ and [Official Docs](https://devcenter.heroku.com/articles/heroku-postgresql)
 ## H2
 
 - We are going to use an in-memory database to run the CI Process.
+
+So we need to create a profile to CI, containing the H2 configuration
+
+`application-ci.yaml`
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+  liquibase:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+```
+
+Set .travis.yml to use the CI Profile, on building processes.
 
 ## Liquibase
 
