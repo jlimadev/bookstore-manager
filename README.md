@@ -29,6 +29,10 @@ gradle bootRun
 - Add KTLint
 - Add Jacoco
 - Configure SonarCloud with TravisCI
+- Add Postgres database local (with docker-compose)
+- Add Postgres database prod (with heroku)
+- Add Liquibase to handle migrations
+- Add H2 and Profile to CI process (no postgres and no liquibase)
 
 ### OpenAPI Configurations
 
@@ -53,9 +57,14 @@ Following the best practices, we use CI/CD processes in this project. [Read more
 
 For CI, we use TravisCI and for CD, we use Heroku.
 
-For Code Analysis we use SonarCloud.
+For [Code Analysis/Quality](docs/Quality.md) we use:
+- SonarCloud to run analysis
+- Test reporting with Jacoco
+- Lint with KTLint
 
 ### Database Model
+
+Database [configuration and explanation](docs/Database.md)
 
 <p align="center"> <img src="docs/assets/db-model.jpg" width=590 alt="database"></p>
 

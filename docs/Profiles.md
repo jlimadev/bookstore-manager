@@ -12,7 +12,7 @@ spring.profiles.active=PROFILENAME
 ```
 
 A few examples of profile:
-- application-devl.yaml
+- application-local.yaml
 ```yaml
 logging:
   level:

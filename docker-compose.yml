@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:13.3
+    container_name: bookstore-manager-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - bookstore-network
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+networks:
+  bookstore-network:
+volumes:
+  postgres:

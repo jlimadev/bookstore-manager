@@ -1,7 +1,13 @@
 spring:
   profiles:
-    active: devl
-
+    active: local
+  datasource:
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/master.xml
 info:
   app:
     custom: custom value from application.yaml

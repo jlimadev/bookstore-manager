@@ -43,6 +43,13 @@ cache:
     - $HOME/.gradle/wrapper/
 ```
 
+If we want to add an [environment variable](https://docs.travis-ci.com/user/environment-variables/) we just need to add on .travis.yml file, such as:
+
+```yaml
+env:
+  - SPRING_PROFILES_ACTIVE=ci
+```
+
 ## Heroku
 
 Create a Heroku account and Connect to your repository.
@@ -82,4 +89,44 @@ tasks {
         archiveFileName.set("bookstore-manager.jar")
     }
 }
+```
+
+### Files
+
+The final .travis.yaml file, with all configurations:
+
+```yaml
+dist: xenial
+language: java
+sudo: false
+install: true
+jdk:
+  - openjdk11
+before_install:
+  - chmod +x gradlew
+  - ./gradlew assemble
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.sonar/cache/
+addons:
+  sonarcloud:
+    organization: ${SONAR_ORGANIZATION}
+    token: ${SONAR_TOKEN}
+script:
+  - ./gradlew jacocoTestReport
+  - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY
+env:
+  - SPRING_PROFILES_ACTIVE=ci
+```
+
+The final Procfile with all configurations:
+
+```shell
+web: java -jar -Dspring.profiles.active=prod -Dserver.port=$PORT $JAVA_OPTS build/libs/bookstore-manager.jar
 ```
