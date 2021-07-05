@@ -50,36 +50,49 @@ Now we have to configure the application to connect to the database, in our appl
 ```yaml
 spring:
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 ```
+
+- About the environment variable names, these given names are related to Heroku variables, if we are using another
+  provider, we can give other names.
+- Apart from DATABASE_URL, which is always there, Heroku creates 3 environment variables at Runtime. They are:
+    - JDBC_DATABASE_URL
+    - JDBC_DATABASE_USERNAME
+    - JDBC_DATABASE_PASSWORD
+
+[Stackoverflow Reference](https://stackoverflow.com/a/41020278/13879410)
+and [Official Docs](https://devcenter.heroku.com/articles/heroku-postgresql)
 
 ## H2
 
 - We are going to use an in-memory database to run the CI Process.
 
-
 ## Liquibase
 
 Liquibase will manage all migrations in our database.
+
 - Automatic creation or rollbacks in our database.
 - We have a changelog that contains one or multiple changeset(s).
-  - A Changeset describes a set of changes that liquibase will execute within one database transaction.
+    - A Changeset describes a set of changes that liquibase will execute within one database transaction.
 
 In our project we need to add the dependency:
 
 ```groovy
 implementation("org.liquibase:liquibase-core:4.4.0")
 ```
+
 ```xml
+
 <dependency>
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-core</artifactId>
     <version>4.4.0</version>
 </dependency>
 ```
+
 Create a master.xml file inside `resources/db` folder:
 
 ```xml
@@ -97,11 +110,12 @@ Create a master.xml file inside `resources/db` folder:
 ```
 
 Configure our application.properties (or yaml)
+
 ```yaml
 spring:
   liquibase:
     change-log: classpath:db/master.xml
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
-    user: ${LIQUIBASE_DATABASE_USERNAME:postgres}
-    password: ${LIQUIBASE_DATABASE_PASSWORD:postgres}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:postgres}
 ```
