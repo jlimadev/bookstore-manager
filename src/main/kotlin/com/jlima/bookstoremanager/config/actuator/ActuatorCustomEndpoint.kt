@@ -4,14 +4,12 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.web.WebEndpointResponse
 import org.springframework.boot.actuate.endpoint.web.annotation.EndpointWebExtension
 import org.springframework.boot.actuate.info.InfoEndpoint
-import org.springframework.boot.info.BuildProperties
 import org.springframework.stereotype.Component
 
 @Component
 @EndpointWebExtension(endpoint = InfoEndpoint::class)
 class ActuatorCustomEndpoint(
-    private val infoEndpoint: InfoEndpoint,
-    private val buildProperties: BuildProperties
+    private val infoEndpoint: InfoEndpoint
 ) {
     @ReadOperation
     fun info(): WebEndpointResponse<Map<String, Any>> {
