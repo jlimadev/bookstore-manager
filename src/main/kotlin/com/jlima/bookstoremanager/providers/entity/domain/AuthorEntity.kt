@@ -1,7 +1,6 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
-import org.hibernate.annotations.CreationTimestamp
 import java.util.Date
 import java.util.UUID
 import javax.persistence.Column
@@ -30,19 +29,9 @@ data class AuthorEntity(
     @Temporal(TemporalType.TIMESTAMP)
     val birthDate: Date,
 
+    @Column(name = "is_active")
+    val isActive: Boolean = true,
+
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    val books: List<BookEntity>,
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    override val createdAt: Date? = null,
-
-    @Column(name = "updated_at", nullable = true, updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    override val updatedAt: Date? = null,
-
-    @Column(name = "deleted_at", nullable = true, updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    override val deletedAt: Date? = null
+    val books: List<BookEntity>
 ) : AuditableEntity()
