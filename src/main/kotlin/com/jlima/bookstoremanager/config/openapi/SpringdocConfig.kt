@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.config
+package com.jlima.bookstoremanager.config.openapi
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Contact
