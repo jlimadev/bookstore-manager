@@ -7,6 +7,8 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
@@ -36,4 +38,7 @@ data class UserEntity(
 
     @Column(name = "is_active")
     var isActive: Boolean = true,
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    var books: List<BookEntity>,
 ) : AuditableEntity()
