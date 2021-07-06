@@ -33,6 +33,7 @@ gradle bootRun
 - Add Postgres database prod (with heroku)
 - Add Liquibase to handle migrations
 - Add H2 and Profile to CI process (no postgres and no liquibase)
+- Enable Auditable Entities
 
 ### OpenAPI Configurations
 
@@ -45,26 +46,32 @@ we can configure OpenApi/swagger in multiple ways. In this project we have two c
 
 We can use multiple profiles in our application. Here is a document with more explanation.
 
-- [Profiles](docs/Profiles.md)
+- [Profiles](docs/ops/profiles.md)
 
 ### Actuator
 
-We can monitor our service by using [Actuator](docs/Actuator.md)
+We can monitor our service by using [Actuator](docs/ops/actuator.md)
 
 ### CI/CD
 
-Following the best practices, we use CI/CD processes in this project. [Read more here](docs/CICD.md). 
+Following the best practices, we use CI/CD processes in this project. [Read more here](docs/ops/CICD.md). 
 
 For CI, we use TravisCI and for CD, we use Heroku.
 
-For [Code Analysis/Quality](docs/Quality.md) we use:
+For [Code Analysis/Quality](docs/ops/quality.md) we use:
 - SonarCloud to run analysis
 - Test reporting with Jacoco
 - Lint with KTLint
 
+### Auditing
+
+In order to track all changes, we have the implementation of auditing in this project.
+
+[Docs on Auditing](docs/security/auditable-classes.md)
+
 ### Database Model
 
-Database [configuration and explanation](docs/Database.md)
+Database [configuration and explanation](docs/ops/database.md)
 
 <p align="center"> <img src="docs/assets/db-model.jpg" width=590 alt="database"></p>
 
