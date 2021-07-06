@@ -63,4 +63,4 @@ data class UserEntity(
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     override val deletedAt: Date? = null
-): AuditableEntity()
+) : AuditableEntity()
