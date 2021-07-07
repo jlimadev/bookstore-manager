@@ -68,6 +68,12 @@ spring:
     - JDBC_DATABASE_USERNAME
     - JDBC_DATABASE_PASSWORD
 
+In our project we need to add the driver to Postgres and spring data jpa
+```groovy
+implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+runtimeOnly("org.postgresql:postgresql:42.2.22") // check the current version
+```
+
 [Stackoverflow Reference](https://stackoverflow.com/a/41020278/13879410)
 and [Official Docs](https://devcenter.heroku.com/articles/heroku-postgresql)
 
@@ -91,7 +97,17 @@ spring:
       ddl-auto: none
 ```
 
-Set .travis.yml to use the CI Profile, on building processes.
+Set .travis.yml to use the CI Profile, on building processes, check the [CI-CD docs](./continuous-integration-delivery.md)
+
+```yaml
+env:
+  - SPRING_PROFILES_ACTIVE=ci
+```
+
+In our project we need to add the driver to H2
+```groovy
+runtimeOnly("com.h2database:h2:1.4.200") // check the current version
+```
 
 ## Liquibase
 
@@ -104,11 +120,10 @@ Liquibase will manage all migrations in our database.
 In our project we need to add the dependency:
 
 ```groovy
-implementation("org.liquibase:liquibase-core:4.4.0")
+implementation("org.liquibase:liquibase-core:4.4.0") // check the current version
 ```
 
 ```xml
-
 <dependency>
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-core</artifactId>
