@@ -34,6 +34,8 @@ gradle bootRun
 - Add Liquibase to handle migrations
 - Add H2 and Profile to CI process (no postgres and no liquibase)
 - Enable Auditable Entities
+- Create Jpa Repositories
+- Create GlobalException Handler
 
 ### OpenAPI Configurations
 
@@ -69,6 +71,61 @@ In order to track all changes, we have the implementation of auditing in this pr
 
 [Docs on Auditing](docs/security/auditable-classes.md)
 
+### Error Handling
+
+The `@ControllerAdvice` [annotation](https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc) deals with
+errors on the request, by injecting the exception handler, or other actions on error. The interceptor of exceptions
+thrown by methods annotated with @RequestMapping or one of the shortcuts
+
+Understanding Better check the references.
+
+Supported annotations to the methods are:
+- `@ExceptionHandler`
+- `@ModelAttribute`
+- `@InitBinder`
+
+The method needs to receive the servlet request, response and exception and extend from `ResponseEntityExceptionHandler` Example:
+
+```kotlin
+@ControllerAdvice
+class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
+    @ExceptionHandler(
+        value = [
+            EntityNotFoundException::class,
+            EntityExistsException::class,
+            HttpMessageNotReadableException::class
+        ]
+    )
+    fun customExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<Any> {
+      val statusCode: HttpStatus
+      val message: String
+
+      when (exception) {
+        is EntityNotFoundException -> {
+          statusCode = HttpStatus.NOT_FOUND
+          message = "Entity not found! Please check you request."
+        }
+        is EntityExistsException -> {
+          statusCode = HttpStatus.BAD_REQUEST
+          message = "This entity already exists! Please check you request."
+        }
+        is HttpMessageNotReadableException -> {
+          statusCode = HttpStatus.BAD_REQUEST
+          message = "Malformed JSON body. Check you JSON and try again."
+        }
+        else -> {
+          statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+          message = "Unexpected error!"
+        }
+      }
+    }
+```
+
+References:
+- [Medium Article](https://medium.com/@jovannypcg/understanding-springs-controlleradvice-cd96a364033f)
+- [Baeldung Article/Solution 3](https://www.baeldung.com/exception-handling-for-rest-with-spring)
+- [ZetCode Article](https://zetcode.com/springboot/controlleradvice/)
+
 ### Database Model
 
 Database [configuration and explanation](docs/ops/database.md)
@@ -103,11 +160,11 @@ Database [configuration and explanation](docs/ops/database.md)
     - PUT [/api/v1/books/{id}]
     - DELETE [/api/v1/books/{id}]
 
-# References
+### References
 
 - [What is REST](https://www.codecademy.com/articles/what-is-rest)
 - [REST and RESTFUL](https://becode.com.br/o-que-e-api-rest-e-restful/)
 - [HTTP status codes](https://restfulapi.net/http-status-codes/)
 - [RESTFUL status codes and practices](https://www.restapitutorial.com/lessons/httpmethods.html#:~:text=The%20primary%20or%20most%2Dcommonly,or%20CRUD)%20operations%2C%20respectively.)
 - [Springboot Docs](https://docs.spring.io/spring-boot/docs/current/reference/html/index.html)
-- [Springboot starters](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters)
+- [Springboot Starters](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters)
