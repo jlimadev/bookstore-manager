@@ -16,7 +16,7 @@ import javax.persistence.EntityExistsException
 import javax.persistence.EntityNotFoundException
 
 @ControllerAdvice
-class BookstoreExceptionHandler : ResponseEntityExceptionHandler() {
+class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(
         value = [
             EntityNotFoundException::class,
