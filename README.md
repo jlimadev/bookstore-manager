@@ -21,53 +21,29 @@ gradle bootRun
 ## Development Process
 
 - Setup project with Spring Initializr
-- Add swagger (open-api v3) and configurations
-- Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
-- Configure Profiles
-- Configure actuator
-- Configure TravisCI
-- Add KTLint
-- Add Jacoco
-- Configure SonarCloud with TravisCI
-- Add Postgres database local (with docker-compose)
-- Add Postgres database prod (with heroku)
-- Add Liquibase to handle migrations
-- Add H2 and Profile to CI process (no postgres and no liquibase)
-- Enable Auditable Entities
-
-### OpenAPI Configurations
-
-we can configure OpenApi/swagger in multiple ways. In this project we have two configuration to it.
-
-- [Springfox](docs/openapi/SpringfoxConfiguration.md)
-- [Springdoc](docs/openapi/SpringdocConfiguration.md)
-
-### Profiles
-
-We can use multiple profiles in our application. Here is a document with more explanation.
-
-- [Profiles](docs/ops/profiles.md)
-
-### Actuator
-
-We can monitor our service by using [Actuator](docs/ops/actuator.md)
-
-### CI/CD
-
-Following the best practices, we use CI/CD processes in this project. [Read more here](docs/ops/CICD.md). 
-
-For CI, we use TravisCI and for CD, we use Heroku.
-
-For [Code Analysis/Quality](docs/ops/quality.md) we use:
-- SonarCloud to run analysis
-- Test reporting with Jacoco
-- Lint with KTLint
-
-### Auditing
-
-In order to track all changes, we have the implementation of auditing in this project.
-
-[Docs on Auditing](docs/security/auditable-classes.md)
+- Application Configurations
+  - [x] Add `springfox` Swagger UI (open-api v2 and v3) - [Springfox](docs/openapi/SpringfoxConfiguration.md)
+  - [x] Add `springdoc-openapi-ui` (open-api v3) [Optional, this is other provider] - [Springdoc](docs/openapi/SpringdocConfiguration.md)
+  - [x] Configure [Profiles](docs/ops/profiles.md)
+  - [x] Configure [Actuator](docs/ops/actuator.md)
+- CI/CD:
+  - [x] Configure [TravisCI](docs/ops/continuous-integration-delivery.md)
+  - [x] Configure [SonarCloud with TravisCI](docs/ops/quality.md)
+  - [x] Add [KTLint and Jacoco](docs/ops/quality.md)
+- [Database](docs/ops/database.md):
+  - [x] Add Postgres database local (with docker-compose)
+  - [x] Add Postgres database prod (with heroku)
+  - [x] Add Liquibase to handle migrations
+  - [x] Add H2 and Profile to CI process (no postgres and no liquibase)
+- Application:
+  - [x] Enable [Auditable Entities](docs/security/auditable-classes.md)
+  - [x] Create [Global Exception Handler](docs/code/global-exception-handler.md)
+  - [x] Create [Jpa Repositories](docs/code/spring-data-jpa.md)
+  - [ ] Create Service Layer
+  - [ ] Pagination and Sorting
+  - [ ] Create Controllers
+  - [ ] Add Cache
+  - [ ] Create a docker container of this application
 
 ### Database Model
 
@@ -103,11 +79,11 @@ Database [configuration and explanation](docs/ops/database.md)
     - PUT [/api/v1/books/{id}]
     - DELETE [/api/v1/books/{id}]
 
-# References
+### References
 
 - [What is REST](https://www.codecademy.com/articles/what-is-rest)
 - [REST and RESTFUL](https://becode.com.br/o-que-e-api-rest-e-restful/)
 - [HTTP status codes](https://restfulapi.net/http-status-codes/)
 - [RESTFUL status codes and practices](https://www.restapitutorial.com/lessons/httpmethods.html#:~:text=The%20primary%20or%20most%2Dcommonly,or%20CRUD)%20operations%2C%20respectively.)
 - [Springboot Docs](https://docs.spring.io/spring-boot/docs/current/reference/html/index.html)
-- [Springboot starters](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters)
+- [Springboot Starters](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using.build-systems.starters)
