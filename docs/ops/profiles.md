@@ -40,3 +40,26 @@ gradle bootRun -Dspring.profiles.active=devl
 
 SPRING_PROFILES_ACTIVE=devl gradle clean bootRun
 ```
+
+## Bonus
+On the code we can get through constructor, through the @Profile("profileName") annotation or get the environment
+variables using @Value("\${profileName}")
+
+```kotlin
+@Profile("profileName") // first way to get the profile
+class SomeClass(private val environment: Environment) { // second way to get the profile
+    @Value("\${spring.profiles.active}") // third way to get the profile
+    lateinit val profileName;
+
+    fun someMethod() {
+        if (this.environment.activeProfile.contains("profileName")) {
+            //do something using the second way to get the profile
+        };
+    }
+
+    @value("")
+    fun otherMethod() {
+
+    }
+}
+```
