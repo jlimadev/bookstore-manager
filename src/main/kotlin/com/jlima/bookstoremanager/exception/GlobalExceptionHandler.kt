@@ -20,8 +20,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(
         value = [
             EntityNotFoundException::class,
-            EntityExistsException::class,
-            HttpMessageNotReadableException::class
+            EntityExistsException::class
         ]
     )
     fun customExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<Any> {
@@ -37,10 +36,6 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                 statusCode = HttpStatus.BAD_REQUEST
                 message = "This entity already exists! Please check you request."
             }
-            is HttpMessageNotReadableException -> {
-                statusCode = HttpStatus.BAD_REQUEST
-                message = "Malformed JSON body. Check you JSON and try again."
-            }
             else -> {
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                 message = "Unexpected error!"
@@ -50,8 +45,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         val exceptionMessage = "$message \n${exception.message}"
         val errorBody = buildExceptionEntity(
             httpStatus = statusCode,
-            message = exceptionMessage,
-            errors = listOf()
+            message = exceptionMessage
         )
         return handleExceptionInternal(exception, errorBody, HttpHeaders(), statusCode, request)
     }
@@ -74,10 +68,25 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         return handleExceptionInternal(exception, errorBody, HttpHeaders(), statusCode, request)
     }
 
+    override fun handleHttpMessageNotReadable(
+        exception: HttpMessageNotReadableException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val statusCode = HttpStatus.BAD_REQUEST
+        val message = "Malformed JSON body. Check you JSON and try again."
+        val errorBody = buildExceptionEntity(
+            httpStatus = statusCode,
+            message = message
+        )
+        return handleExceptionInternal(exception, errorBody, HttpHeaders(), statusCode, request)
+    }
+
     private fun buildExceptionEntity(
         httpStatus: HttpStatus,
         message: String,
-        errors: List<String>
+        errors: List<String> = listOf()
     ): ExceptionResponse {
         return ExceptionResponse(
             statusCode = httpStatus.value(),
