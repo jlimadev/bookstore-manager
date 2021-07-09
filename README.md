@@ -39,6 +39,7 @@ gradle bootRun
   - [x] Enable [Auditable Entities](docs/security/auditable-classes.md)
   - [x] Create [Global Exception Handler](docs/code/global-exception-handler.md)
   - [x] Configure [Bean Validation](docs/code/bean-validation.md) (spring-boot-starter-validation)
+  - [x] Configure DTOs Dependency [MapStruct](docs/code/DTO.md) 
   - [x] Create [Jpa Repositories](docs/code/spring-data-jpa.md)
   - [ ] Create Service Layer
   - [ ] Pagination and Sorting
