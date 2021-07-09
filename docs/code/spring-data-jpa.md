@@ -39,10 +39,32 @@ runtimeOnly("org.postgresql:postgresql:42.2.22")
 In order to create a repository we need to add an interface that implements the JpaRepository and map the Entity (with the database relationships) and the id type:
 
 ````kotlin
-interface UserRepository : JpaRepository<UserEntity, UUID>
+interface UserRepository : JpaRepository<AuthorEntity, UUID>
 ````
 
 We can inject the repository, because spring creates a bean to us.
+
+This is entity has to be mapped to the database:
+
+```kotlin
+@Entity
+@Table(schema = "domain", name = "author")
+data class AuthorEntity(
+    @Column(name = "name", length = 255)
+    var name: String,
+
+    @Column(name = "birth_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    var birthDate: Date,
+
+    @Column(name = "is_active")
+    var isActive: Boolean = true,
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    val books: List<BookEntity>,
+) : AuditableEntity()
+
+```
 
 ## References
 - [Spring official docs](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference)
