@@ -21,110 +21,29 @@ gradle bootRun
 ## Development Process
 
 - Setup project with Spring Initializr
-- Add swagger (open-api v3) and configurations
-- Add springdoc-openapi-ui (open-api v3) and configurations [Optional, this is other provider]
-- Configure Profiles
-- Configure actuator
-- Configure TravisCI
-- Add KTLint
-- Add Jacoco
-- Configure SonarCloud with TravisCI
-- Add Postgres database local (with docker-compose)
-- Add Postgres database prod (with heroku)
-- Add Liquibase to handle migrations
-- Add H2 and Profile to CI process (no postgres and no liquibase)
-- Enable Auditable Entities
-- Create Jpa Repositories
-- Create GlobalException Handler
-
-### OpenAPI Configurations
-
-we can configure OpenApi/swagger in multiple ways. In this project we have two configuration to it.
-
-- [Springfox](docs/openapi/SpringfoxConfiguration.md)
-- [Springdoc](docs/openapi/SpringdocConfiguration.md)
-
-### Profiles
-
-We can use multiple profiles in our application. Here is a document with more explanation.
-
-- [Profiles](docs/ops/profiles.md)
-
-### Actuator
-
-We can monitor our service by using [Actuator](docs/ops/actuator.md)
-
-### CI/CD
-
-Following the best practices, we use CI/CD processes in this project. [Read more here](docs/ops/CICD.md). 
-
-For CI, we use TravisCI and for CD, we use Heroku.
-
-For [Code Analysis/Quality](docs/ops/quality.md) we use:
-- SonarCloud to run analysis
-- Test reporting with Jacoco
-- Lint with KTLint
-
-### Auditing
-
-In order to track all changes, we have the implementation of auditing in this project.
-
-[Docs on Auditing](docs/security/auditable-classes.md)
-
-### Error Handling
-
-The `@ControllerAdvice` [annotation](https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc) deals with
-errors on the request, by injecting the exception handler, or other actions on error. The interceptor of exceptions
-thrown by methods annotated with @RequestMapping or one of the shortcuts
-
-Understanding Better check the references.
-
-Supported annotations to the methods are:
-- `@ExceptionHandler`
-- `@ModelAttribute`
-- `@InitBinder`
-
-The method needs to receive the servlet request, response and exception and extend from `ResponseEntityExceptionHandler` Example:
-
-```kotlin
-@ControllerAdvice
-class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
-    @ExceptionHandler(
-        value = [
-            EntityNotFoundException::class,
-            EntityExistsException::class,
-            HttpMessageNotReadableException::class
-        ]
-    )
-    fun customExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<Any> {
-      val statusCode: HttpStatus
-      val message: String
-
-      when (exception) {
-        is EntityNotFoundException -> {
-          statusCode = HttpStatus.NOT_FOUND
-          message = "Entity not found! Please check you request."
-        }
-        is EntityExistsException -> {
-          statusCode = HttpStatus.BAD_REQUEST
-          message = "This entity already exists! Please check you request."
-        }
-        is HttpMessageNotReadableException -> {
-          statusCode = HttpStatus.BAD_REQUEST
-          message = "Malformed JSON body. Check you JSON and try again."
-        }
-        else -> {
-          statusCode = HttpStatus.INTERNAL_SERVER_ERROR
-          message = "Unexpected error!"
-        }
-      }
-    }
-```
-
-References:
-- [Medium Article](https://medium.com/@jovannypcg/understanding-springs-controlleradvice-cd96a364033f)
-- [Baeldung Article/Solution 3](https://www.baeldung.com/exception-handling-for-rest-with-spring)
-- [ZetCode Article](https://zetcode.com/springboot/controlleradvice/)
+- Application Configurations
+  - [x] Add `springfox` Swagger UI (open-api v2 and v3) - [Springfox](docs/openapi/SpringfoxConfiguration.md)
+  - [x] Add `springdoc-openapi-ui` (open-api v3) [Optional, this is other provider] - [Springdoc](docs/openapi/SpringdocConfiguration.md)
+  - [x] Configure [Profiles](docs/ops/profiles.md)
+  - [x] Configure [Actuator](docs/ops/actuator.md)
+- CI/CD:
+  - [x] Configure [TravisCI](docs/ops/continuous-integration-delivery.md)
+  - [x] Configure [SonarCloud with TravisCI](docs/ops/quality.md)
+  - [x] Add [KTLint and Jacoco](docs/ops/quality.md)
+- [Database](docs/ops/database.md):
+  - [x] Add Postgres database local (with docker-compose)
+  - [x] Add Postgres database prod (with heroku)
+  - [x] Add Liquibase to handle migrations
+  - [x] Add H2 and Profile to CI process (no postgres and no liquibase)
+- Application:
+  - [x] Enable [Auditable Entities](docs/security/auditable-classes.md)
+  - [x] Create [Global Exception Handler](docs/code/global-exception-handler.md)
+  - [x] Create [Jpa Repositories](docs/code/spring-data-jpa.md)
+  - [ ] Create Service Layer
+  - [ ] Pagination and Sorting
+  - [ ] Create Controllers
+  - [ ] Add Cache
+  - [ ] Create a docker container of this application
 
 ### Database Model
 
