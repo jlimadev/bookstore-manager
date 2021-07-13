@@ -21,4 +21,9 @@ class AuthorService(
     override fun findById(id: UUID): AuthorDTO {
         return authorRepository.findById(id).get().toDTO()
     }
+
+    override fun findAll(): List<AuthorDTO> {
+        val foundAuthors = authorRepository.findAll()
+        return foundAuthors.map { it.toDTO() }
+    }
 }
