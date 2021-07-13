@@ -46,6 +46,12 @@ gradle bootRun
   - [ ] Create Controllers
   - [ ] Add Cache
   - [ ] Create a docker container of this application
+  
+### Tests
+
+- [Jackson Helper](docs/code/tests/JSON.md) to convert to JSON
+- [Unit Tests](docs/code/tests/unit-test.md)
+- [Integration Tests](docs/code/tests/integration-tests.md) - Testing our Controllers
 
 ### Database Model
 
