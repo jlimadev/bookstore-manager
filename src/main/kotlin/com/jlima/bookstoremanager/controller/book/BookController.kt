@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.controller
+package com.jlima.bookstoremanager.controller.book
 
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse

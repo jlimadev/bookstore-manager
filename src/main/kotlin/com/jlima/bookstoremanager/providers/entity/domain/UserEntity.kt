@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
-import com.jlima.bookstoremanager.core.domain.Gender
+import com.jlima.bookstoremanager.core.Gender
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
 import java.util.UUID

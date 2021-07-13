@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.dto.domain
+package com.jlima.bookstoremanager.dto
 
 import java.util.Date
 import javax.validation.constraints.NotEmpty

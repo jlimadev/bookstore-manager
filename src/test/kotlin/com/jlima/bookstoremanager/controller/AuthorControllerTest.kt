@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.controller
 
-import com.jlima.bookstoremanager.core.domain.Author
+import com.jlima.bookstoremanager.controller.author.AuthorController
+import com.jlima.bookstoremanager.core.Author
 import com.jlima.bookstoremanager.service.AuthorService
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension

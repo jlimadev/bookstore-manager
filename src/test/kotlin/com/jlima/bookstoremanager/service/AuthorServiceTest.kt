@@ -1,9 +1,9 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.domain.AuthorDTO
+import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
-import com.jlima.bookstoremanager.providers.repository.domain.AuthorRepository
+import com.jlima.bookstoremanager.providers.repository.AuthorRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
