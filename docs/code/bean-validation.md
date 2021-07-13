@@ -7,6 +7,25 @@ First we add the following dependency:
 ```groovy
 implementation("org.springframework.boot:spring-boot-starter-validation")
 ```
+We can add the validations this way*:
+```kotlin
+data class AuthorDTO(
+    val id: String? = null,
+
+    @field:NotNull
+    @field:NotEmpty
+    @field:Size(min = 3, max = 255)
+    val name: String,
+
+    @field:NotNull
+    val birthDate: Date
+)
+
+```
+
+*This `field` is only for kotlin.
+- Kotlin: `@field:NotNull`
+- Java: `@NotNull`
 
 **This document is in progress**
 

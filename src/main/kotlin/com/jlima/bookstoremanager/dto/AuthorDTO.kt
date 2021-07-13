@@ -8,11 +8,11 @@ import javax.validation.constraints.Size
 data class AuthorDTO(
     val id: String? = null,
 
-    @NotNull
-    @NotEmpty
-    @Size(max = 255)
+    @field:NotNull
+    @field:NotEmpty
+    @field:Size(min = 3, max = 255)
     val name: String,
 
-    @NotNull
+    @field:NotNull
     val birthDate: Date
 )
