@@ -1,38 +1,70 @@
 package com.jlima.bookstoremanager.controller
 
 import com.jlima.bookstoremanager.controller.author.AuthorController
-import com.jlima.bookstoremanager.core.Author
+import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.AuthorService
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.mock
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.MediaType
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.post
 import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(AuthorController::class)
-internal class AuthorControllerTest {
+class AuthorControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+    @MockBean
+    private lateinit var authorService: AuthorService
+
     private data class SUT(
-        private val sut: AuthorController
+        val defaultDTO: AuthorDTO,
+        val entityId: UUID,
     )
 
     private fun makeSut(): SUT {
-        val authorService: AuthorService = mock()
-        val authorDTO = Author(
-            id = UUID.randomUUID().toString(),
-            name = "Jonathan",
+        val entityId = UUID.randomUUID()
+        val defaultDTO = AuthorDTO(
+            name = "Jonathan Lima",
             birthDate = Date.from(Instant.now())
         )
 
         return SUT(
-            sut = AuthorController(authorService)
+            defaultDTO = defaultDTO,
+            entityId = entityId
         )
+    }
+
+    @Test
+    fun `It should created an Author and Return 201 (Created) when POST`() {
+        // Given [Arrange]
+        val (defaultDTO, entityId) = makeSut()
+        val expectedResponse = defaultDTO.copy(id = entityId.toString())
+
+        // When [Act]
+        whenever(authorService.create(any())).thenReturn(expectedResponse)
+
+        // Then [Assert]
+        mockMvc
+            .post("/api/v1/authors") {
+                accept = MediaType.APPLICATION_JSON
+                contentType = MediaType.APPLICATION_JSON
+                content = defaultDTO.toJson()
+            }.andExpect {
+                status { isCreated() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                content { json(expectedResponse.toJson()) }
+            }
     }
 }
