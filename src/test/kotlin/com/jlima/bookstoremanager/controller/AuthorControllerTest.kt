@@ -59,7 +59,7 @@ class AuthorControllerTest {
 
         // Assert
         mockMvc
-            .post("/api/v1/authors") {
+            .post("/authors") {
                 contentType = MediaType.APPLICATION_JSON
                 content = defaultDTO.toJson()
             }.andExpect {
@@ -79,7 +79,7 @@ class AuthorControllerTest {
         val expectedContainingError = "Field: NAME: must not be empty"
 
         // Assert
-        mockMvc.post("/api/v1/authors") {
+        mockMvc.post("/authors") {
             contentType = MediaType.APPLICATION_JSON
             content = invalidEntity.toJson()
         }.andExpect {

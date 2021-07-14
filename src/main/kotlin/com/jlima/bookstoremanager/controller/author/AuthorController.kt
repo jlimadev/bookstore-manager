@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/v1/authors")
+@RequestMapping("/authors")
 class AuthorController(
     private val authorService: AuthorService
 ) : AuthorControllerDocs {
