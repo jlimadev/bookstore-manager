@@ -53,7 +53,7 @@ internal class AuthorServiceTest {
     }
 
     @Test
-    fun `It should create an author correctly and return a DTO`() {
+    fun `It should create an author correctly and return a DTO when call create with valid data`() {
         // Arrange
         val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
         val expectedCreatedEntity = defaultDTO.copy(id = entityId.toString())
@@ -67,7 +67,7 @@ internal class AuthorServiceTest {
     }
 
     @Test
-    fun `It should findById`() {
+    fun `It should return a DTO from the found entity when call findById with existing id`() {
         // Arrange
         val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
         val expectedFoundEntity = defaultDTO.copy(id = entityId.toString())
@@ -81,7 +81,7 @@ internal class AuthorServiceTest {
     }
 
     @Test
-    fun `It should throw a EntityNotFoundException when cannot findById`() {
+    fun `It should throw a EntityNotFoundException when call findById with non-existing id`() {
         // Arrange
         val (sut, authorRepository) = makeSut()
         val randomId = UUID.randomUUID()
