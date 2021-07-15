@@ -85,7 +85,7 @@ internal class AuthorServiceTest {
         // Given [Arrange]
         val (sut, authorRepository) = makeSut()
         val randomId = UUID.randomUUID()
-        val expectedErrorMessage = "${AvailableEntities.AUTHOR} with id $randomId not found. Please try again."
+        val expectedErrorMessage = "${AvailableEntities.AUTHOR} with id $randomId not found."
 
         // When [Act]
         whenever(authorRepository.findById(randomId)).thenReturn(Optional.empty())

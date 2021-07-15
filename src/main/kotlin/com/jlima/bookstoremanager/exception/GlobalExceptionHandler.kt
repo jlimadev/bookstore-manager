@@ -30,11 +30,11 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         when (exception) {
             is EntityNotFoundException -> {
                 statusCode = HttpStatus.NOT_FOUND
-                message = "Entity not found! Please check you request."
+                message = "Entity not found!"
             }
             is EntityExistsException -> {
                 statusCode = HttpStatus.BAD_REQUEST
-                message = "This entity already exists! Please check you request."
+                message = "This entity already exists!"
             }
             else -> {
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR
@@ -42,7 +42,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             }
         }
 
-        val exceptionMessage = "$message \n${exception.message}"
+        val exceptionMessage = "$message ${exception.message} Please check you request."
         val errorBody = buildExceptionEntity(
             httpStatus = statusCode,
             message = exceptionMessage
