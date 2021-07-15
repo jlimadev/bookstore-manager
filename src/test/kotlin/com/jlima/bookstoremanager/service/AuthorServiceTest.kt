@@ -54,43 +54,43 @@ internal class AuthorServiceTest {
 
     @Test
     fun `It should create an author correctly and return a DTO`() {
-        // Given [Arrange]
+        // Arrange
         val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
         val expectedCreatedEntity = defaultDTO.copy(id = entityId.toString())
 
-        // When [Act]
+        // Act
         whenever(authorRepository.save(defaultDTO.toEntity())).thenReturn(defaultEntity)
         val response = sut.create(defaultDTO)
 
-        // Then [Assert]
+        // Assert
         assertEquals(expectedCreatedEntity, response)
     }
 
     @Test
     fun `It should findById`() {
-        // Given [Arrange]
+        // Arrange
         val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
         val expectedFoundEntity = defaultDTO.copy(id = entityId.toString())
 
-        // When [Act]
+        // Act
         whenever(authorRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
         val response = sut.findById(entityId)
 
-        // Then [Assert]
+        // Assert
         assertEquals(expectedFoundEntity, response)
     }
 
     @Test
     fun `It should throw a EntityNotFoundException when cannot findById`() {
-        // Given [Arrange]
+        // Arrange
         val (sut, authorRepository) = makeSut()
         val randomId = UUID.randomUUID()
         val expectedErrorMessage = "${AvailableEntities.AUTHOR} with id $randomId not found."
 
-        // When [Act]
+        // Act
         whenever(authorRepository.findById(randomId)).thenReturn(Optional.empty())
 
-        // Then [Assert]
+        // Assert
         val exception = assertThrows<BusinessEntityNotFoundException> {
             sut.findById(randomId)
         }
@@ -100,15 +100,15 @@ internal class AuthorServiceTest {
 
     @Test
     fun `It should return a list of authors when findAll is called`() {
-        // Given [Arrange]
+        // Arrange
         val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
         val expectedFoundEntities = listOf(defaultDTO.copy(id = entityId.toString()))
 
-        // When [Then]
+        // Then
         whenever(authorRepository.findAll()).thenReturn(listOf(defaultEntity))
         val response = sut.findAll()
 
-        // Then [Assert]
+        // Assert
         assertEquals(expectedFoundEntities, response)
     }
 }
