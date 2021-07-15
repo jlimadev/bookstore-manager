@@ -140,7 +140,7 @@ internal class AuthorServiceTest {
             val expectedErrorMessage = "No ${AvailableEntities.AUTHOR}(s) found."
 
             // Act
-            whenever(authorRepository.findAll()).thenThrow(BusinessEmptyResponseException(AvailableEntities.AUTHOR))
+            whenever(authorRepository.findAll()).thenReturn(listOf())
 
             // Assert
             val exception = assertThrows<BusinessEmptyResponseException> { sut.findAll() }
