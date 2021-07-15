@@ -1,7 +1,8 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
-import com.jlima.bookstoremanager.exception.model.AuthorNotFoundException
+import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
@@ -84,15 +85,17 @@ internal class AuthorServiceTest {
         // Given [Arrange]
         val (sut, authorRepository) = makeSut()
         val randomId = UUID.randomUUID()
-        val expectedErrorMessage = "Author with id $randomId not found. Please try again."
+        val expectedErrorMessage = "${AvailableEntities.AUTHOR} with id $randomId not found. Please try again."
 
         // When [Act]
         whenever(authorRepository.findById(randomId)).thenReturn(Optional.empty())
 
         // Then [Assert]
-        assertThrows<AuthorNotFoundException>(message = expectedErrorMessage) {
+        val exception = assertThrows<BusinessEntityNotFoundException> {
             sut.findById(randomId)
         }
+
+        assertEquals(expectedErrorMessage, exception.message)
     }
 
     @Test
