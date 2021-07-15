@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
@@ -28,6 +29,9 @@ class AuthorService(
 
     override fun findAll(): List<AuthorDTO> {
         val foundAuthors = authorRepository.findAll()
+        if (foundAuthors.isEmpty()) {
+            throw BusinessEmptyResponseException(AvailableEntities.AUTHOR)
+        }
         return foundAuthors.map { it.toDTO() }
     }
 }

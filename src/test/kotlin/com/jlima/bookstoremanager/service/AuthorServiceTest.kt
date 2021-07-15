@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.util.Date
@@ -64,6 +67,7 @@ internal class AuthorServiceTest {
 
         // Assert
         assertEquals(expectedCreatedEntity, response)
+        verify(authorRepository, times(1)).save(defaultDTO.toEntity())
     }
 
     @Test
@@ -78,6 +82,7 @@ internal class AuthorServiceTest {
 
         // Assert
         assertEquals(expectedFoundEntity, response)
+        verify(authorRepository, times(1)).findById(entityId)
     }
 
     @Test
@@ -96,6 +101,7 @@ internal class AuthorServiceTest {
         }
 
         assertEquals(expectedErrorMessage, exception.message)
+        verify(authorRepository, times(1)).findById(randomId)
     }
 
     @Test
@@ -110,5 +116,21 @@ internal class AuthorServiceTest {
 
         // Assert
         assertEquals(expectedFoundEntities, response)
+        verify(authorRepository, times(1)).findAll()
+    }
+
+    @Test
+    fun `It should throw BusinessEmptyResponseException when call findAll and it returns an empty response`() {
+        // Arrange
+        val (sut, authorRepository) = makeSut()
+        val expectedErrorMessage = "No ${AvailableEntities.AUTHOR}(s) found."
+
+        // Act
+        whenever(authorRepository.findAll()).thenThrow(BusinessEmptyResponseException(AvailableEntities.AUTHOR))
+
+        // Assert
+        val exception = assertThrows<BusinessEmptyResponseException> { sut.findAll() }
+        assertEquals(expectedErrorMessage, exception.message)
+        verify(authorRepository, times(1)).findAll()
     }
 }
