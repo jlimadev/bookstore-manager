@@ -1,10 +1,12 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.exception.model.AuthorNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
@@ -75,6 +77,22 @@ internal class AuthorServiceTest {
 
         // Then [Assert]
         assertEquals(expectedFoundEntity, response)
+    }
+
+    @Test
+    fun `It should throw a EntityNotFoundException when cannot findById`() {
+        // Given [Arrange]
+        val (sut, authorRepository) = makeSut()
+        val randomId = UUID.randomUUID()
+        val expectedErrorMessage = "Author with id $randomId not found. Please try again."
+
+        // When [Act]
+        whenever(authorRepository.findById(randomId)).thenReturn(Optional.empty())
+
+        // Then [Assert]
+        assertThrows<AuthorNotFoundException>(message = expectedErrorMessage) {
+            sut.findById(randomId)
+        }
     }
 
     @Test
