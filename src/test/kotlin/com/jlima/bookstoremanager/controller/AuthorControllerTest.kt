@@ -2,6 +2,8 @@ package com.jlima.bookstoremanager.controller
 
 import com.jlima.bookstoremanager.controller.author.AuthorController
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.AuthorService
 import org.hamcrest.CoreMatchers.hasItem
@@ -16,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.Instant
 import java.util.Date
@@ -49,7 +52,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    fun `It should created an Author and Return 201 (Created) when POST`() {
+    fun `It should created an Author and must return status 201 (Created) when POST with valid data`() {
         // Arrange
         val (defaultDTO, entityId) = makeSut()
         val expectedResponse = defaultDTO.copy(id = entityId.toString())
@@ -70,7 +73,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    fun `It should not create an author and return a BadRequest when POST with invalid data`() {
+    fun `It should not create an author and must return status 400 (BadRequest) when POST with invalid data`() {
         // Arrange
         val (defaultDTO) = makeSut()
 
@@ -90,5 +93,47 @@ class AuthorControllerTest {
             jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
             jsonPath("$.errors", hasItem(expectedContainingError))
         }
+    }
+
+    @Test
+    fun `It should get an Author by id and must return status 200 (Ok) when GET with valid Id`() {
+        // Arrange
+        val (defaultDTO, entityId) = makeSut()
+        val expectedResponse = defaultDTO.copy(id = entityId.toString())
+
+        // Act
+        whenever(authorService.findById(entityId)).thenReturn(expectedResponse)
+
+        // Assert
+        mockMvc.get("/authors/$entityId")
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                content { expectedResponse.toJson() }
+            }
+    }
+
+    @Test
+    fun `It should not get an Author by id and must return status 404 (Not Found) when GET with non-existing Id`() {
+        // Arrange
+        val invalidId = UUID.randomUUID()
+
+        // Act
+        whenever(authorService.findById(invalidId)).thenThrow(
+            BusinessEntityNotFoundException(
+                entity = AvailableEntities.AUTHOR,
+                id = invalidId
+            )
+        )
+
+        // Assert
+        mockMvc.get("/authors/$invalidId")
+            .andDo { print() }
+            .andExpect {
+                status { isNotFound() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.statusCode", Is.`is`(404))
+                jsonPath("$.error", Is.`is`("Not Found"))
+            }
     }
 }
