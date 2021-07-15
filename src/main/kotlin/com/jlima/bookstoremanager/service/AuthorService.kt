@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.exception.model.AuthorNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
@@ -19,7 +20,9 @@ class AuthorService(
     }
 
     override fun findById(id: UUID): AuthorDTO {
-        return authorRepository.findById(id).get().toDTO()
+        val foundAuthor = authorRepository.findById(id)
+            .orElseThrow { AuthorNotFoundException(id) }
+        return foundAuthor.toDTO()
     }
 
     override fun findAll(): List<AuthorDTO> {
