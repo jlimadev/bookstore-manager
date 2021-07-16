@@ -4,6 +4,7 @@ import com.jlima.bookstoremanager.helper.ValidUUID
 import java.util.Date
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.PastOrPresent
 import javax.validation.constraints.Size
 
 data class AuthorDTO(
@@ -16,5 +17,6 @@ data class AuthorDTO(
     val name: String,
 
     @field:NotNull
+    @field:PastOrPresent
     val birthDate: Date
 )

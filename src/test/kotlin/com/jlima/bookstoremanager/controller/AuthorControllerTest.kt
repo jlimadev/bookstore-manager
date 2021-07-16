@@ -183,7 +183,7 @@ class AuthorControllerTest {
         }
 
         @Test
-        fun `It should return 400 (Bad Request) when try to findById with non-uuid`() {
+        fun `It should return status 400 (Bad Request) when try to findById with non-uuid`() {
             // Arrange
             val expectedContainingError = "Field ID: Invalid UUID string: non-uuid"
             // Assert
@@ -278,7 +278,7 @@ class AuthorControllerTest {
         }
 
         @Test
-        fun `It should return status 400 (BadRequest) when PUT with no JSON body`() {
+        fun `It should return status 400 (Bad Request) when PUT with no JSON body`() {
             // Arrange
             val sutData = makeSut()
             val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
@@ -294,6 +294,60 @@ class AuthorControllerTest {
                     jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
             verify(authorService, never()).update(any(), any())
+        }
+
+        @Test
+        fun `It should return status 400 (Bad Request) when PUT with invalid data on JSON body`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val requestBodyToUpdate = defaultDTO.copy(name = "")
+            val expectedContainingErrors = listOf(
+                "Field: NAME: must not be empty",
+                "Field: NAME: size must be between 3 and 255"
+            )
+
+            // Assert
+            mockMvc.put("/authors/$entityId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBodyToUpdate.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    jsonPath("$.statusCode", Is.`is`(400))
+                    jsonPath("$.error", Is.`is`("Bad Request"))
+                    jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
+                    jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
+                }
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when PUT with non-existing id`() {
+            // Arrange
+            val (defaultDTO) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(authorService.update(nonExistingId, defaultDTO)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.put("/authors/$nonExistingId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = defaultDTO.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", Is.`is`(404))
+                    jsonPath("$.error", Is.`is`("Not Found"))
+                }
+            verify(authorService, times(1)).update(nonExistingId, defaultDTO)
         }
     }
 }
