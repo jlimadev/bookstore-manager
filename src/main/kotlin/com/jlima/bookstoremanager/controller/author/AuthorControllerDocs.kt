@@ -14,8 +14,14 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     @ApiOperation(value = "Create a new author")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Author created successfully!"),
-            ApiResponse(code = 400, message = "Missing required fields, wrong field range value or author already registered on system")
+            ApiResponse(
+                code = 201,
+                message = "Author created successfully"
+            ),
+            ApiResponse(
+                code = 400,
+                message = "Missing required fields, wrong field range value or author already registered on system"
+            )
         ]
     )
     override fun create(entity: AuthorDTO): ResponseEntity<AuthorDTO>
@@ -23,8 +29,14 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     @ApiOperation(value = "Find an author by id")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Author Found!"),
-            ApiResponse(code = 404, message = "Author Not Found")
+            ApiResponse(
+                code = 200,
+                message = "Author found"
+            ),
+            ApiResponse(
+                code = 404,
+                message = "Author not found"
+            )
         ]
     )
     override fun findById(id: UUID): ResponseEntity<AuthorDTO>
@@ -32,9 +44,34 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     @ApiOperation(value = "Find all authors")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Authors found!"),
-            ApiResponse(code = 404, message = "No authors found")
+            ApiResponse(
+                code = 200,
+                message = "Authors found!"
+            ),
+            ApiResponse(
+                code = 404,
+                message = "No authors found"
+            )
         ]
     )
     override fun findAll(): ResponseEntity<List<AuthorDTO>>
+
+    @ApiOperation(value = "Update an Author by id")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                code = 200,
+                message = "Author successfully updated"
+            ),
+            ApiResponse(
+                code = 400,
+                message = "Missing required fields, wrong field range value or author already registered on system"
+            ),
+            ApiResponse(
+                code = 404,
+                message = "Author not found"
+            )
+        ]
+    )
+    override fun update(id: UUID, body: AuthorDTO): ResponseEntity<AuthorDTO>
 }

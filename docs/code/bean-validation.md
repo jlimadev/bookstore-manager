@@ -27,6 +27,15 @@ data class AuthorDTO(
 - Kotlin: `@field:NotNull`
 - Java: `@NotNull`
 
+
+Our controller attribute must have the `@Valid` annotation in order to validate using beans.
+```kotlin
+@PostMapping
+    override fun create(@RequestBody @Valid entity: AuthorDTO): ResponseEntity<AuthorDTO> {
+        val createdAuthor = authorService.create(entity)
+        return ResponseEntity(createdAuthor, HttpStatus.CREATED)
+    }
+```
 **This document is in progress**
 
 ## References
