@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiResponses
 import org.springframework.http.ResponseEntity
 import java.util.UUID
 
-@Api("Authors Management")
+@Api(tags = ["Authors"], description = "Endpoint to manage all authors within the system")
 interface AuthorControllerDocs : BaseController<AuthorDTO> {
     @ApiOperation(value = "Create a new author")
     @ApiResponses(
