@@ -31,6 +31,7 @@ management:
 springdoc:
   packages-to-scan: com.jlima.bookstoremanager
   swagger-ui:
+    disable-swagger-default-url: true
     path: /springdoc/swagger-ui
   api-docs:
     path: /springdoc/v3/api-docs
