@@ -24,8 +24,17 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     @ApiResponses(
         value = [
             ApiResponse(code = 201, message = "Author Found!"),
-            ApiResponse(code = 400, message = "Author Not Found")
+            ApiResponse(code = 404, message = "Author Not Found")
         ]
     )
     override fun findById(id: UUID): ResponseEntity<AuthorDTO>
+
+    @ApiOperation(value = "Find all authors")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 201, message = "Authors found!"),
+            ApiResponse(code = 404, message = "No authors found")
+        ]
+    )
+    override fun findAll(): ResponseEntity<List<AuthorDTO>>
 }
