@@ -75,11 +75,14 @@ class AuthorControllerTest {
                 .post("/authors") {
                     contentType = MediaType.APPLICATION_JSON
                     content = defaultDTO.toJson()
-                }.andExpect {
+                }
+                .andDo { print() }
+                .andExpect {
                     status { isCreated() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedResponse.toJson()) }
                 }
+            verify(authorService, times(1)).create(defaultDTO)
         }
 
         @Test
@@ -98,14 +101,17 @@ class AuthorControllerTest {
             mockMvc.post("/authors") {
                 contentType = MediaType.APPLICATION_JSON
                 content = invalidEntity.toJson()
-            }.andExpect {
-                status { isBadRequest() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.statusCode", Is.`is`(400))
-                jsonPath("$.error", Is.`is`("Bad Request"))
-                jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
-                jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
             }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", Is.`is`(400))
+                    jsonPath("$.error", Is.`is`("Bad Request"))
+                    jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
+                    jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
+                }
+            verify(authorService, never()).create(any())
         }
     }
 
@@ -123,6 +129,7 @@ class AuthorControllerTest {
 
             // Assert
             mockMvc.get("/authors/$entityId")
+                .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
@@ -153,7 +160,7 @@ class AuthorControllerTest {
                     jsonPath("$.statusCode", Is.`is`(404))
                     jsonPath("$.error", Is.`is`("Not Found"))
                 }
-            verify(authorService).findById(nonExistingId)
+            verify(authorService, times(1)).findById(nonExistingId)
         }
 
         @Test
@@ -194,6 +201,7 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedResponse.toJson()) }
                 }
+            verify(authorService, times(1)).findAll()
         }
 
         @Test
@@ -216,6 +224,7 @@ class AuthorControllerTest {
                     jsonPath("$.error", Is.`is`("Not Found"))
                     jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
+            verify(authorService, times(1)).findAll()
         }
     }
 }
