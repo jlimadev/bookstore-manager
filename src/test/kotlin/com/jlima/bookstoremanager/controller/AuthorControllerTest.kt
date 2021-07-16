@@ -87,7 +87,7 @@ class AuthorControllerTest {
         }
 
         @Test
-        fun `It should not create an author and must return status 400 (BadRequest) when POST with invalid data`() {
+        fun `It should return status 400 (BadRequest) when POST with invalid data`() {
             // Arrange
             val (defaultDTO) = makeSut()
 
@@ -111,6 +111,24 @@ class AuthorControllerTest {
                     jsonPath("$.error", Is.`is`("Bad Request"))
                     jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
                     jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
+                }
+            verify(authorService, never()).create(any())
+        }
+
+        @Test
+        fun `It should return status 400 (BadRequest) when POST with no JSON body`() {
+            // Arrange
+            val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
+
+            // Assert
+            mockMvc.post("/authors")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", equalTo(400))
+                    jsonPath("$.error", equalTo("Bad Request"))
+                    jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
             verify(authorService, never()).create(any())
         }
@@ -165,7 +183,7 @@ class AuthorControllerTest {
         }
 
         @Test
-        fun `It should return 400 Bad Request when try to findById with non-uuid`() {
+        fun `It should return 400 (Bad Request) when try to findById with non-uuid`() {
             // Arrange
             val expectedContainingError = "Field ID: Invalid UUID string: non-uuid"
             // Assert
@@ -256,6 +274,26 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { expectedUpdatedResponse.toJson() }
                 }
+            verify(authorService, times(1)).update(entityId, requestBodyToUpdate)
+        }
+
+        @Test
+        fun `It should return status 400 (BadRequest) when PUT with no JSON body`() {
+            // Arrange
+            val sutData = makeSut()
+            val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
+
+            // Assert
+            mockMvc.put("/authors/${sutData.entityId}")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", equalTo(400))
+                    jsonPath("$.error", equalTo("Bad Request"))
+                    jsonPath("$.message", equalTo(expectedErrorMessage))
+                }
+            verify(authorService, never()).update(any(), any())
         }
     }
 }
