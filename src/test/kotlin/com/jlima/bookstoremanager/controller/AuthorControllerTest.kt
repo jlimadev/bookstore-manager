@@ -3,10 +3,12 @@ package com.jlima.bookstoremanager.controller
 import com.jlima.bookstoremanager.controller.author.AuthorController
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.AuthorService
-import org.hamcrest.CoreMatchers.hasItem
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.core.Is
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -54,7 +56,7 @@ class AuthorControllerTest {
     }
 
     @Nested
-    @DisplayName("[POST] - Create Tests")
+    @DisplayName("[POST] - Create")
     inner class Create {
         @Test
         fun `It should created an Author and must return status 201 (Created) when POST with valid data`() {
@@ -84,7 +86,10 @@ class AuthorControllerTest {
 
             // Act
             val invalidEntity = defaultDTO.copy(name = "")
-            val expectedContainingError = "Field: NAME: must not be empty"
+            val expectedContainingErrors = listOf(
+                "Field: NAME: must not be empty",
+                "Field: NAME: size must be between 3 and 255"
+            )
 
             // Assert
             mockMvc.post("/authors") {
@@ -96,16 +101,16 @@ class AuthorControllerTest {
                 jsonPath("$.statusCode", Is.`is`(400))
                 jsonPath("$.error", Is.`is`("Bad Request"))
                 jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
-                jsonPath("$.errors", hasItem(expectedContainingError))
+                jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
             }
         }
     }
 
     @Nested
-    @DisplayName("[GET] - FindById Tests")
+    @DisplayName("[GET] - FindById")
     inner class FindById {
         @Test
-        fun `It should get an Author by id and must return status 200 (Ok) when GET with valid Id`() {
+        fun `It should get an Author by id and return status 200 (OK) when GET with valid id`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
             val expectedResponse = defaultDTO.copy(id = entityId.toString())
@@ -123,7 +128,7 @@ class AuthorControllerTest {
         }
 
         @Test
-        fun `It should not get an Author by id and must return status 404 (Not Found) when GET with non-existing Id`() {
+        fun `It should return status 404 (Not Found) when GET with non-existing id`() {
             // Arrange
             val invalidId = UUID.randomUUID()
 
@@ -143,6 +148,51 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.statusCode", Is.`is`(404))
                     jsonPath("$.error", Is.`is`("Not Found"))
+                }
+        }
+    }
+
+    @Nested
+    @DisplayName("[GET] - FindAll")
+    inner class FindAll {
+        @Test
+        fun `It should return a list of Authors and status 200 (OK) when GET All`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val expectedResponse = listOf(defaultDTO.copy(id = entityId.toString()))
+
+            // Act
+            whenever(authorService.findAll()).thenReturn(expectedResponse)
+
+            // Assert
+            mockMvc.get("/authors")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { json(expectedResponse.toJson()) }
+                }
+        }
+
+        @Test
+        fun `It should not return 404 (Not Found) when GET returns nothing`() {
+            // Arrange
+            val expectedErrorMessage = "Entity not found! No AUTHOR(s) found. Please check you request."
+
+            // Act
+            whenever(authorService.findAll()).thenThrow(
+                BusinessEmptyResponseException(AvailableEntities.AUTHOR)
+            )
+
+            // Assert
+            mockMvc.get("/authors")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", Is.`is`(404))
+                    jsonPath("$.error", Is.`is`("Not Found"))
+                    jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
         }
     }
