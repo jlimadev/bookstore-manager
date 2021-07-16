@@ -64,6 +64,7 @@ class AuthorControllerTest {
 - Official Docs [WebMvcTest](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/web/servlet/WebMvcTest.html)
 - MockMvc [Examples](https://howtodoinjava.com/spring-boot2/testing/spring-boot-mockmvc-example/)
 - More MockMvc examples [Dimitr](https://dimitr.im/testing-your-rest-controllers-and-clients-with-spring)
+- JsonPath Assertion [Examples](https://github.com/moleske/springdo-kotlin/blob/master/src/test/kotlin/io/pivotal/AdminControllerTest.kt)
 - **Baeldung**
     - [MockMVC with Kotlin](https://www.baeldung.com/kotlin/mockmvc-kotlin-dsl)
     - [Baeldung Integration Test](https://www.baeldung.com/integration-testing-in-spring)
