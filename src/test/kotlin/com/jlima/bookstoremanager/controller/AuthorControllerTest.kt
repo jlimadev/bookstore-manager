@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -125,23 +128,24 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { expectedResponse.toJson() }
                 }
+            verify(authorService, times(1)).findById(entityId)
         }
 
         @Test
         fun `It should return status 404 (Not Found) when GET with non-existing id`() {
             // Arrange
-            val invalidId = UUID.randomUUID()
+            val nonExistingId = UUID.randomUUID()
 
             // Act
-            whenever(authorService.findById(invalidId)).thenThrow(
+            whenever(authorService.findById(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = invalidId
+                    id = nonExistingId
                 )
             )
 
             // Assert
-            mockMvc.get("/authors/$invalidId")
+            mockMvc.get("/authors/$nonExistingId")
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
@@ -149,6 +153,24 @@ class AuthorControllerTest {
                     jsonPath("$.statusCode", Is.`is`(404))
                     jsonPath("$.error", Is.`is`("Not Found"))
                 }
+            verify(authorService).findById(nonExistingId)
+        }
+
+        @Test
+        fun `It should return 400 Bad Request when try to findById with non-uuid`() {
+            // Arrange
+            val expectedContainingError = "Field ID: Invalid UUID string: non-uuid"
+            // Assert
+            mockMvc.get("/authors/non-uuid")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", equalTo(400))
+                    jsonPath("$.error", equalTo("Bad Request"))
+                    jsonPath("$.errors", hasItems(expectedContainingError))
+                }
+            verify(authorService, never()).findById(any())
         }
     }
 
