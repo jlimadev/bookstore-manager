@@ -27,6 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.time.Instant
 import java.util.Date
 import java.util.UUID
@@ -225,6 +226,36 @@ class AuthorControllerTest {
                     jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
             verify(authorService, times(1)).findAll()
+        }
+    }
+
+    @Nested
+    @DisplayName("[PUT] - Update")
+    inner class Update {
+        @Test
+        fun `It should update and return status 201 (OK) when send existing id and valid body`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val requestBodyToUpdate = defaultDTO.copy(
+                name = "Updated name",
+                birthDate = Date.from(Instant.now())
+            )
+            val expectedUpdatedResponse = requestBodyToUpdate.copy(id = entityId.toString())
+
+            // Act
+            whenever(authorService.update(entityId, requestBodyToUpdate)).thenReturn(expectedUpdatedResponse)
+
+            // Assert
+            mockMvc.put("/authors/$entityId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBodyToUpdate.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { expectedUpdatedResponse.toJson() }
+                }
         }
     }
 }
