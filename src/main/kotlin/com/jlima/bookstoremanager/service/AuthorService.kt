@@ -4,6 +4,7 @@ import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
+import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
@@ -22,9 +23,7 @@ class AuthorService(
     }
 
     override fun findById(id: UUID): AuthorDTO {
-        val foundAuthor = authorRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id) }
-        return foundAuthor.toDTO()
+        return findEntityById(id).toDTO()
     }
 
     override fun findAll(): List<AuthorDTO> {
@@ -33,5 +32,18 @@ class AuthorService(
             throw BusinessEmptyResponseException(AvailableEntities.AUTHOR)
         }
         return foundAuthors.map { it.toDTO() }
+    }
+
+    override fun update(id: UUID, entity: AuthorDTO): AuthorDTO {
+        val existingAuthor = findEntityById(id)
+        existingAuthor.name = entity.name
+        existingAuthor.birthDate = entity.birthDate
+
+        return authorRepository.save(existingAuthor).toDTO()
+    }
+
+    private fun findEntityById(id: UUID): AuthorEntity {
+        return authorRepository.findById(id)
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id) }
     }
 }

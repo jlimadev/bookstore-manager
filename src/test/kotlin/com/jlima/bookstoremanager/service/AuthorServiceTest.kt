@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -59,7 +61,7 @@ internal class AuthorServiceTest {
     }
 
     @Nested
-    @DisplayName("Create Tests")
+    @DisplayName("Create")
     inner class Create {
         @Test
         fun `It should create an author correctly and return a DTO when call create with valid data`() {
@@ -78,7 +80,7 @@ internal class AuthorServiceTest {
     }
 
     @Nested
-    @DisplayName("findById Tests")
+    @DisplayName("findById")
     inner class FindById {
         @Test
         fun `It should return a DTO from the found entity when call findById with existing id`() {
@@ -116,7 +118,7 @@ internal class AuthorServiceTest {
     }
 
     @Nested
-    @DisplayName("findAll Tests")
+    @DisplayName("findAll")
     inner class FindAll {
         @Test
         fun `It should return a list of authors when findAll is called`() {
@@ -146,6 +148,51 @@ internal class AuthorServiceTest {
             val exception = assertThrows<BusinessEmptyResponseException> { sut.findAll() }
             assertEquals(expectedErrorMessage, exception.message)
             verify(authorRepository, times(1)).findAll()
+        }
+    }
+
+    @Nested
+    @DisplayName("Update")
+    inner class Update {
+        @Test
+        fun `It should update successfully`() {
+            // Arrange
+            val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
+            val updatedName = "Any updated name"
+            val updatedDate = Date.from(Instant.now())
+            val updatedEntity = defaultEntity.copy(name = updatedName, birthDate = updatedDate)
+            val requestBody = defaultDTO.copy(name = updatedName, birthDate = updatedDate)
+            val expectedResponse = requestBody.copy(id = entityId.toString())
+
+            whenever(authorRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+            whenever(authorRepository.save(updatedEntity)).thenReturn(updatedEntity)
+
+            // Act
+            val response = sut.update(entityId, requestBody)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(authorRepository).save(updatedEntity)
+        }
+
+        @Test
+        fun `It should throw BusinessEntityNotFoundException when call update and it returns an empty response`() {
+            // Arrange
+            val sutData = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            val expectedMessage = "${AvailableEntities.AUTHOR} with id $nonExistingId not found."
+
+            whenever(sutData.authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> {
+                sutData.sut.update(nonExistingId, sutData.defaultDTO)
+            }
+
+            // Assert
+            assertEquals(expectedMessage, exception.message)
+            verify(sutData.authorRepository, times(1)).findById(nonExistingId)
+            verify(sutData.authorRepository, never()).save(any())
         }
     }
 }
