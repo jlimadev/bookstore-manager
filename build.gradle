@@ -82,8 +82,6 @@ compileKotlin {
 
 test {
     useJUnitPlatform()
-    // report is always generated after tests run
-    finalizedBy jacocoTestReport
 }
 
 jacoco {
@@ -91,6 +89,7 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
+        '**/com/jlima/bookstoremanager/**/*.jar',
         '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
         '**/com/jlima/bookstoremanager/config/**',
         '**/com/jlima/bookstoremanager/**/exception/**',
