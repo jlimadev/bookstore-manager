@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.time.Instant
 import java.util.Date
@@ -20,12 +21,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(
         value = [
             EntityNotFoundException::class,
-            EntityExistsException::class
+            EntityExistsException::class,
+            MethodArgumentTypeMismatchException::class
         ]
     )
     fun customExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<Any> {
         val statusCode: HttpStatus
         val message: String
+        val errorList = mutableListOf<String>()
 
         when (exception) {
             is EntityNotFoundException -> {
@@ -36,6 +39,11 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                 statusCode = HttpStatus.BAD_REQUEST
                 message = "This entity already exists!"
             }
+            is MethodArgumentTypeMismatchException -> {
+                statusCode = HttpStatus.BAD_REQUEST
+                message = "Invalid argument."
+                errorList.add("Field ${exception.name.uppercase()}: ${exception.mostSpecificCause.message}")
+            }
             else -> {
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                 message = "Unexpected error!"
@@ -45,7 +53,8 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         val exceptionMessage = "$message ${exception.message} Please check you request."
         val errorBody = buildExceptionEntity(
             httpStatus = statusCode,
-            message = exceptionMessage
+            message = exceptionMessage,
+            errors = errorList
         )
         return handleExceptionInternal(exception, errorBody, HttpHeaders(), statusCode, request)
     }
