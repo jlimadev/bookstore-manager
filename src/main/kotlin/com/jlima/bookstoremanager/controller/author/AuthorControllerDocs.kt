@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.controller.author
 
 import com.jlima.bookstoremanager.controller.BaseController
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -88,7 +89,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun delete(id: UUID): ResponseEntity<String>
+    override fun delete(id: UUID): ResponseEntity<CustomMessageResponse>
 
     @ApiOperation(value = "Delete an Author by id (hard delete)")
     @ApiResponses(
@@ -103,5 +104,5 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun hardDelete(id: UUID): ResponseEntity<String>
+    override fun hardDelete(id: UUID): ResponseEntity<CustomMessageResponse>
 }

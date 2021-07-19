@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.controller.author
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
 import com.jlima.bookstoremanager.service.AuthorService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -43,12 +44,14 @@ class AuthorController(
     }
 
     @DeleteMapping("/{id}")
-    override fun delete(@PathVariable id: UUID): ResponseEntity<String> {
-        return ResponseEntity(authorService.delete(id), HttpStatus.OK)
+    override fun delete(@PathVariable id: UUID): ResponseEntity<CustomMessageResponse> {
+        val responseMessage = authorService.delete(id)
+        return ResponseEntity(CustomMessageResponse(message = responseMessage), HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}/hard")
-    override fun hardDelete(@PathVariable id: UUID): ResponseEntity<String> {
-        return ResponseEntity(authorService.hardDelete(id), HttpStatus.OK)
+    override fun hardDelete(@PathVariable id: UUID): ResponseEntity<CustomMessageResponse> {
+        val responseMessage = authorService.hardDelete(id)
+        return ResponseEntity(CustomMessageResponse(message = responseMessage), HttpStatus.OK)
     }
 }
