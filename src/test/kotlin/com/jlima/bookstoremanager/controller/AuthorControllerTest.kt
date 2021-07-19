@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.controller
 
 import com.jlima.bookstoremanager.controller.author.AuthorController
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
@@ -208,10 +209,16 @@ class AuthorControllerTest {
         fun `It should return a list of Authors and status 200 (OK) when GET All`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
-            val expectedResponse = listOf(defaultDTO.copy(id = entityId.toString()))
+            val listOfEntities = listOf(defaultDTO.copy(id = entityId.toString()))
+            val expectedPaginationResponse = PaginationResponse(
+                totalPages = 1,
+                totalItems = 1,
+                currentPage = 0,
+                data = listOfEntities
+            )
 
             // Act
-            whenever(authorService.findAll()).thenReturn(expectedResponse)
+            whenever(authorService.findAll(page = 0, size = 10)).thenReturn(expectedPaginationResponse)
 
             // Assert
             mockMvc.get("/authors")
@@ -219,9 +226,9 @@ class AuthorControllerTest {
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    content { json(expectedResponse.toJson()) }
+                    content { json(expectedPaginationResponse.toJson()) }
                 }
-            verify(authorService, times(1)).findAll()
+            verify(authorService, times(1)).findAll(page = 0, size = 10)
         }
 
         @Test
@@ -230,7 +237,7 @@ class AuthorControllerTest {
             val expectedErrorMessage = "Entity not found! No AUTHOR(s) found. Please check you request."
 
             // Act
-            whenever(authorService.findAll()).thenThrow(
+            whenever(authorService.findAll(page = 0, size = 10)).thenThrow(
                 BusinessEmptyResponseException(AvailableEntities.AUTHOR)
             )
 
@@ -244,7 +251,7 @@ class AuthorControllerTest {
                     jsonPath("$.error", Is.`is`("Not Found"))
                     jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
-            verify(authorService, times(1)).findAll()
+            verify(authorService, times(1)).findAll(page = 0, size = 10)
         }
     }
 
