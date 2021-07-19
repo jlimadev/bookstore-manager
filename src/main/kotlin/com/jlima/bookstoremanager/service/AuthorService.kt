@@ -44,14 +44,14 @@ class AuthorService(
 
     override fun delete(id: UUID): String {
         val existingAuthor = findEntityById(id)
-        existingAuthor.isActive = false
-        authorRepository.save(existingAuthor)
+        authorRepository.delete(existingAuthor)
         return "Success on deleting Author $id: ${existingAuthor.name}"
     }
 
-    override fun hardDelete(id: UUID): String {
+    override fun deleteSoft(id: UUID): String {
         val existingAuthor = findEntityById(id)
-        authorRepository.delete(existingAuthor)
+        existingAuthor.isActive = false
+        authorRepository.save(existingAuthor)
         return "Success on deleting Author $id: ${existingAuthor.name}"
     }
 

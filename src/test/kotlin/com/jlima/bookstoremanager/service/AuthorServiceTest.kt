@@ -209,11 +209,12 @@ internal class AuthorServiceTest {
             whenever(authorRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
 
             // Act
-            val response = sut.delete(entityId)
+            val response = sut.deleteSoft(entityId)
 
             // Assert
             assertEquals(expectedResponse, response)
             verify(authorRepository, times(1)).save(expectedDeletedEntity)
+            verify(authorRepository, never()).delete(any())
         }
 
         @Test
@@ -225,7 +226,7 @@ internal class AuthorServiceTest {
             whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act
-            val exception = assertThrows<BusinessEntityNotFoundException> { sut.delete(nonExistingId) }
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.deleteSoft(nonExistingId) }
 
             // Assert
             assertEquals(expectedMessage, exception.message)
@@ -245,7 +246,7 @@ internal class AuthorServiceTest {
             whenever(authorRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
 
             // Act
-            val response = sut.hardDelete(entityId)
+            val response = sut.delete(entityId)
 
             // Assert
             verify(authorRepository, times(1)).findById(entityId)
@@ -254,7 +255,7 @@ internal class AuthorServiceTest {
         }
 
         @Test
-        fun `It should throw BusinessEntityNotFoundException when call hardDelete passing non-existing id`() {
+        fun `It should throw BusinessEntityNotFoundException when call delete passing non-existing id`() {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val nonExistingId = UUID.randomUUID()
@@ -262,7 +263,7 @@ internal class AuthorServiceTest {
             whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act
-            val exception = assertThrows<BusinessEntityNotFoundException> { sut.hardDelete(nonExistingId) }
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.delete(nonExistingId) }
 
             // Assert
             assertEquals(expectedMessage, exception.message)
