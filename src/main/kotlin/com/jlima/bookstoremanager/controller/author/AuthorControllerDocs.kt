@@ -74,4 +74,34 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
         ]
     )
     override fun update(id: UUID, body: AuthorDTO): ResponseEntity<AuthorDTO>
+
+    @ApiOperation(value = "Delete an Author by id (isActive = false)")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                code = 200,
+                message = "Author successfully deleted"
+            ),
+            ApiResponse(
+                code = 404,
+                message = "Author not found"
+            )
+        ]
+    )
+    override fun delete(id: UUID): ResponseEntity<String>
+
+    @ApiOperation(value = "Delete an Author by id (hard delete)")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                code = 200,
+                message = "Author successfully deleted"
+            ),
+            ApiResponse(
+                code = 404,
+                message = "Author not found"
+            )
+        ]
+    )
+    override fun hardDelete(id: UUID): ResponseEntity<String>
 }

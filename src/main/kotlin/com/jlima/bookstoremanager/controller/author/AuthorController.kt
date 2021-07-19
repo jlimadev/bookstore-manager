@@ -4,6 +4,7 @@ import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.service.AuthorService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -39,5 +40,15 @@ class AuthorController(
     @PutMapping("/{id}")
     override fun update(@PathVariable id: UUID, @RequestBody @Valid body: AuthorDTO): ResponseEntity<AuthorDTO> {
         return ResponseEntity(authorService.update(id, body), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    override fun delete(@PathVariable id: UUID): ResponseEntity<String> {
+        return ResponseEntity(authorService.delete(id), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}/hard")
+    override fun hardDelete(@PathVariable id: UUID): ResponseEntity<String> {
+        return ResponseEntity(authorService.hardDelete(id), HttpStatus.OK)
     }
 }
