@@ -104,5 +104,5 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun softDelete(id: UUID): ResponseEntity<CustomMessageResponse>
+    override fun deleteSoft(id: UUID): ResponseEntity<CustomMessageResponse>
 }

@@ -50,8 +50,8 @@ class AuthorController(
     }
 
     @DeleteMapping("/{id}/soft")
-    override fun softDelete(@PathVariable id: UUID): ResponseEntity<CustomMessageResponse> {
-        val responseMessage = authorService.hardDelete(id)
+    override fun deleteSoft(@PathVariable id: UUID): ResponseEntity<CustomMessageResponse> {
+        val responseMessage = authorService.deleteSoft(id)
         return ResponseEntity(CustomMessageResponse(message = responseMessage), HttpStatus.OK)
     }
 }

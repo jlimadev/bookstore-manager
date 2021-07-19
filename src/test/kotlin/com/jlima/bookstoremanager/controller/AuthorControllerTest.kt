@@ -25,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
@@ -251,7 +252,7 @@ class AuthorControllerTest {
     @DisplayName("[PUT] - Update")
     inner class Update {
         @Test
-        fun `It should update and return status 201 (OK) when send existing id and valid body`() {
+        fun `It should update and return status 200 (OK) when send existing id and valid body`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
             val requestBodyToUpdate = defaultDTO.copy(
@@ -348,6 +349,102 @@ class AuthorControllerTest {
                     jsonPath("$.error", Is.`is`("Not Found"))
                 }
             verify(authorService, times(1)).update(nonExistingId, defaultDTO)
+        }
+    }
+
+    @Nested
+    @DisplayName("[DELETE] - Delete - Hard")
+    inner class Delete {
+        @Test
+        fun `It should delete and return status 200 (OK) when send existing id to delete`() {
+            // Arrange
+            val (_, entityId) = makeSut()
+            val expectedMessage = "Any deleted message"
+
+            whenever(authorService.delete(entityId)).thenReturn(expectedMessage)
+
+            // Assert
+            mockMvc.delete("/authors/$entityId")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.message", equalTo(expectedMessage))
+                }
+            verify(authorService, times(1)).delete(entityId)
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when DELETE with non-existing id`() {
+            // Arrange
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(authorService.delete(nonExistingId)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.delete("/authors/$nonExistingId")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", equalTo(404))
+                    jsonPath("$.error", equalTo("Not Found"))
+                }
+            verify(authorService, times(1)).delete(nonExistingId)
+        }
+    }
+
+    @Nested
+    @DisplayName("[DELETE] - Delete - Soft")
+    inner class DeleteSoft {
+        @Test
+        fun `It should delete and return status 200 (OK) when send existing id to delete`() {
+            // Arrange
+            val (_, entityId) = makeSut()
+            val expectedMessage = "Any deleted message"
+
+            whenever(authorService.deleteSoft(entityId)).thenReturn(expectedMessage)
+
+            // Assert
+            mockMvc.delete("/authors/$entityId/soft")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.message", equalTo(expectedMessage))
+                }
+            verify(authorService, times(1)).deleteSoft(entityId)
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when DELETE with non-existing id`() {
+            // Arrange
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(authorService.deleteSoft(nonExistingId)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.delete("/authors/$nonExistingId/soft")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", equalTo(404))
+                    jsonPath("$.error", equalTo("Not Found"))
+                }
+            verify(authorService, times(1)).deleteSoft(nonExistingId)
         }
     }
 }
