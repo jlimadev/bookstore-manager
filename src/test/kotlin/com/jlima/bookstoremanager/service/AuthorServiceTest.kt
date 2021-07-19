@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
@@ -19,6 +20,10 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.Instant
 import java.util.Date
 import java.util.Optional
@@ -125,14 +130,21 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
             val expectedFoundEntities = listOf(defaultDTO.copy(id = entityId.toString()))
+            val pageable = PageRequest.of(0, 5, Sort.by("name"))
+            val expectedPaginationResponse = PaginationResponse(
+                totalPages = 1,
+                totalItems = 1,
+                currentPage = 0,
+                data = expectedFoundEntities
+            )
 
             // Then
-            whenever(authorRepository.findAll()).thenReturn(listOf(defaultEntity))
-            val response = sut.findAll()
+            whenever(authorRepository.findAll(pageable)).thenReturn((PageImpl(listOf(defaultEntity))))
+            val response = sut.findAll(page = pageable.pageNumber, size = pageable.pageSize)
 
             // Assert
-            assertEquals(expectedFoundEntities, response)
-            verify(authorRepository, times(1)).findAll()
+            assertEquals(expectedPaginationResponse, response)
+            verify(authorRepository, times(1)).findAll(pageable)
         }
 
         @Test
@@ -140,14 +152,18 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val expectedErrorMessage = "No ${AvailableEntities.AUTHOR}(s) found."
+            val pageable = PageRequest.of(1, 1, Sort.by("name"))
 
             // Act
-            whenever(authorRepository.findAll()).thenReturn(listOf())
+            whenever(authorRepository.findAll(pageable)).thenReturn(Page.empty())
 
             // Assert
-            val exception = assertThrows<BusinessEmptyResponseException> { sut.findAll() }
+            val exception = assertThrows<BusinessEmptyResponseException> {
+                sut.findAll(page = pageable.pageNumber, size = pageable.pageSize)
+            }
+
             assertEquals(expectedErrorMessage, exception.message)
-            verify(authorRepository, times(1)).findAll()
+            verify(authorRepository, times(1)).findAll(pageable)
         }
     }
 

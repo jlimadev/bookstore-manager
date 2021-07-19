@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.controller.author
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.service.AuthorService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 import javax.validation.Valid
@@ -34,8 +36,11 @@ class AuthorController(
     }
 
     @GetMapping
-    override fun findAll(): ResponseEntity<List<AuthorDTO>> {
-        return ResponseEntity(authorService.findAll(), HttpStatus.OK)
+    override fun findAll(
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+        @RequestParam(required = false, defaultValue = "10") size: Int
+    ): ResponseEntity<PaginationResponse<AuthorDTO>> {
+        return ResponseEntity(authorService.findAll(page, size), HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
