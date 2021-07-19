@@ -195,4 +195,42 @@ internal class AuthorServiceTest {
             verify(sutData.authorRepository, never()).save(any())
         }
     }
+
+    @Nested
+    @DisplayName("Delete (soft)")
+    inner class Delete {
+        @Test
+        fun `It should update isActive to false when call delete method`() {
+            // Arrange
+            val (sut, authorRepository, _, defaultEntity, entityId) = makeSut()
+            val expectedDeletedEntity = defaultEntity.copy(isActive = false)
+            val expectedResponse = "Success on deleting Author $entityId: ${defaultEntity.name}"
+
+            whenever(authorRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+
+            // Act
+            val response = sut.delete(entityId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(authorRepository, times(1)).save(expectedDeletedEntity)
+        }
+
+        @Test
+        fun `It should throw BusinessEntityNotFoundException when call delete passing non-existing id`() {
+            // Arrange
+            val (sut, authorRepository) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            val expectedMessage = "${AvailableEntities.AUTHOR} with id $nonExistingId not found."
+            whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.delete(nonExistingId) }
+
+            // Assert
+            assertEquals(expectedMessage, exception.message)
+            verify(authorRepository, times(1)).findById(nonExistingId)
+            verify(authorRepository, never()).save(any())
+        }
+    }
 }

@@ -7,4 +7,5 @@ interface CrudService<T> {
     fun findById(id: UUID): T
     fun findAll(): List<T>
     fun update(id: UUID, entity: T): T
+    fun delete(id: UUID): String
 }
