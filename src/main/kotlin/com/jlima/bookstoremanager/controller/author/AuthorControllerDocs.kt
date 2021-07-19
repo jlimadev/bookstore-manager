@@ -76,7 +76,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     )
     override fun update(id: UUID, body: AuthorDTO): ResponseEntity<AuthorDTO>
 
-    @ApiOperation(value = "Delete an Author by id (isActive = false)")
+    @ApiOperation(value = "Delete an Author by id (hard delete)")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -91,7 +91,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
     )
     override fun delete(id: UUID): ResponseEntity<CustomMessageResponse>
 
-    @ApiOperation(value = "Delete an Author by id (hard delete)")
+    @ApiOperation(value = "Delete an Author by id (soft delete)")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -104,5 +104,5 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun hardDelete(id: UUID): ResponseEntity<CustomMessageResponse>
+    override fun softDelete(id: UUID): ResponseEntity<CustomMessageResponse>
 }

@@ -10,5 +10,5 @@ interface BaseController<T> {
     fun findAll(): ResponseEntity<List<T>>
     fun update(id: UUID, body: T): ResponseEntity<T>
     fun delete(id: UUID): ResponseEntity<CustomMessageResponse>
-    fun hardDelete(id: UUID): ResponseEntity<CustomMessageResponse>
+    fun softDelete(id: UUID): ResponseEntity<CustomMessageResponse>
 }
