@@ -36,7 +36,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             ),
             ApiResponse(
                 code = 404,
-                message = "Author not found"
+                message = "Author not found - Unable to find non-existing Author"
             )
         ]
     )
@@ -70,7 +70,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             ),
             ApiResponse(
                 code = 404,
-                message = "Author not found"
+                message = "Author not found - Unable to update non-existing Author"
             )
         ]
     )
@@ -85,7 +85,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             ),
             ApiResponse(
                 code = 404,
-                message = "Author not found"
+                message = "Author not found - Unable to delete non-existing Author"
             )
         ]
     )
@@ -100,7 +100,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             ),
             ApiResponse(
                 code = 404,
-                message = "Author not found"
+                message = "Author not found - Cannot set isActive to false"
             )
         ]
     )
