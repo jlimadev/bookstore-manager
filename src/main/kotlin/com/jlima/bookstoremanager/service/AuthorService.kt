@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
@@ -8,6 +9,8 @@ import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -26,12 +29,22 @@ class AuthorService(
         return findEntityById(id).toDTO()
     }
 
-    override fun findAll(): List<AuthorDTO> {
-        val foundAuthors = authorRepository.findAll()
-        if (foundAuthors.isEmpty()) {
+    override fun findAll(page: Int, size: Int): PaginationResponse<AuthorDTO> {
+        val sort = Sort.by("name").ascending()
+        val pageable = PageRequest.of(page, size, sort)
+        val databaseResult = authorRepository.findAll(pageable)
+        val authorsList = databaseResult.toList()
+
+        if (authorsList.isEmpty()) {
             throw BusinessEmptyResponseException(AvailableEntities.AUTHOR)
         }
-        return foundAuthors.map { it.toDTO() }
+
+        return PaginationResponse(
+            totalPages = databaseResult.totalPages,
+            totalItems = databaseResult.totalElements.toInt(),
+            currentPage = databaseResult.number,
+            data = authorsList.map { it.toDTO() }
+        )
     }
 
     override fun update(id: UUID, entity: AuthorDTO): AuthorDTO {

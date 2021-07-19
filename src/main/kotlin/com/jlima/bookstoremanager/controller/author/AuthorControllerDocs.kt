@@ -3,6 +3,7 @@ package com.jlima.bookstoremanager.controller.author
 import com.jlima.bookstoremanager.controller.BaseController
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -55,7 +56,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun findAll(): ResponseEntity<List<AuthorDTO>>
+    override fun findAll(page: Int, size: Int): ResponseEntity<PaginationResponse<AuthorDTO>>
 
     @ApiOperation(value = "Update an Author by id")
     @ApiResponses(
