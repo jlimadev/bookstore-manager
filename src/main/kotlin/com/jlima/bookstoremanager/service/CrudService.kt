@@ -8,4 +8,5 @@ interface CrudService<T> {
     fun findAll(): List<T>
     fun update(id: UUID, entity: T): T
     fun delete(id: UUID): String
+    fun hardDelete(id: UUID): String
 }

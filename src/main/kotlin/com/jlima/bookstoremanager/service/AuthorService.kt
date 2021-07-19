@@ -49,6 +49,12 @@ class AuthorService(
         return "Success on deleting Author $id: ${existingAuthor.name}"
     }
 
+    override fun hardDelete(id: UUID): String {
+        val existingAuthor = findEntityById(id)
+        authorRepository.delete(existingAuthor)
+        return "Success on deleting Author $id: ${existingAuthor.name}"
+    }
+
     private fun findEntityById(id: UUID): AuthorEntity {
         return authorRepository.findById(id)
             .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id) }
