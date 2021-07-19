@@ -2,9 +2,12 @@ package com.jlima.bookstoremanager.providers.entity.domain
 
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
+import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
@@ -12,6 +15,11 @@ import javax.persistence.Table
 @Entity
 @Table(name = "book", schema = "domain")
 data class BookEntity(
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    val id: UUID? = null,
+
     @Column(name = "name")
     var name: String,
 

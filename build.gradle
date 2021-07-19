@@ -50,7 +50,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("io.springfox:springfox-boot-starter:${springfoxVersion}")
     implementation("org.springdoc:springdoc-openapi-ui:${springdocVersion}")
@@ -66,6 +65,15 @@ dependencies {
 
     implementation("org.mapstruct:mapstruct:1.4.2.Final")
     kapt("org.mapstruct:mapstruct-processor:1.4.2.Final")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito:mockito-core:3.10.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("org.mockito:mockito-inline:2.7.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testImplementation("org.assertj:assertj-core:3.11.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 }
 
 compileKotlin {
@@ -74,8 +82,6 @@ compileKotlin {
 
 test {
     useJUnitPlatform()
-    // report is always generated after tests run
-    finalizedBy jacocoTestReport
 }
 
 jacoco {
@@ -83,6 +89,7 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
+        '**/com/jlima/bookstoremanager/**/*.jar',
         '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
         '**/com/jlima/bookstoremanager/config/**',
         '**/com/jlima/bookstoremanager/**/exception/**',

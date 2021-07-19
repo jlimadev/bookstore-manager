@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.providers.repository.domain
+package com.jlima.bookstoremanager.providers.repository
 
 import com.jlima.bookstoremanager.providers.entity.domain.PublisherEntity
 import org.springframework.data.jpa.repository.JpaRepository

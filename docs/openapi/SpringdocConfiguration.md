@@ -62,7 +62,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/books")
 class BookController {
     @Operation(summary = "This method returns a hello world")
     @ApiResponses(value = [ApiResponse(responseCode = "200", description = "Success method return")])

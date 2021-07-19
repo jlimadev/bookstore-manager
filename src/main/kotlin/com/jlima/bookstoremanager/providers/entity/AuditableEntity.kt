@@ -12,7 +12,7 @@ import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-abstract class AuditableEntity : BaseEntity() {
+abstract class AuditableEntity {
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     protected lateinit var createdBy: String

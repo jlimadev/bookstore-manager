@@ -18,7 +18,7 @@ apply plugin: 'org.barfuin.gradle.jacocolog'
 test {
     useJUnitPlatform()
     // report is always generated after tests run
-    finalizedBy jacocoTestReport
+    // finalizedBy jacocoTestReport [Optional]
 }
 
 jacoco {
@@ -26,6 +26,7 @@ jacoco {
 }
 
 def packagesToExcludeOnCoverage = [
+        '**/com/jlima/bookstoremanager/**/*.jar',
         '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
         '**/com/jlima/bookstoremanager/config/**',
         '**/com/jlima/bookstoremanager/**/exception/**',
@@ -128,6 +129,7 @@ apply plugin: "org.sonarqube"
 
 // This packages to exclude will apply to sonar and jacoco
 def packagesToExcludeOnCoverage = [
+        '**/com/jlima/bookstoremanager/**/*.jar',
         '**/com/jlima/bookstoremanager/BookstoreManagerApplicationKt*.*',
         '**/com/jlima/bookstoremanager/config/**',
         '**/com/jlima/bookstoremanager/**/exception/**',

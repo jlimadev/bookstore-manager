@@ -1,3 +1,8 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
 spring:
   profiles:
     active: local
@@ -8,6 +13,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:db/master.xml
+
 info:
   app:
     custom: custom value from application.yaml
@@ -25,6 +31,7 @@ management:
 springdoc:
   packages-to-scan: com.jlima.bookstoremanager
   swagger-ui:
+    disable-swagger-default-url: true
     path: /springdoc/swagger-ui
   api-docs:
     path: /springdoc/v3/api-docs

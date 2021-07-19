@@ -58,7 +58,7 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/books")
 class BookController {
 
     @ApiOperation("This method returns a hello world")
