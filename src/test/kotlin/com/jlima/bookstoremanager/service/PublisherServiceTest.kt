@@ -13,6 +13,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.util.Date
+import java.util.Optional
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -72,8 +73,23 @@ internal class PublisherServiceTest {
         }
     }
 
-    @Test
-    fun findById() {
+    @Nested
+    @DisplayName("FindById")
+    inner class FindById {
+        @Test
+        fun `It should return a DTO from the found entity when call findById with existing id`() {
+            // Arrange
+            val (sut, publisherRepository, defaultDTO, defaultEntity, entityId) = makeSut()
+            val expectedResponse = defaultDTO.copy(id = entityId.toString())
+            whenever(publisherRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+
+            // Act
+            val response = sut.findById(entityId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(publisherRepository, times(1)).findById(entityId)
+        }
     }
 
     @Test
