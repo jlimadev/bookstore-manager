@@ -8,6 +8,7 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import java.util.UUID
 
@@ -56,7 +57,7 @@ interface AuthorControllerDocs : BaseController<AuthorDTO> {
             )
         ]
     )
-    override fun findAll(page: Int, size: Int): ResponseEntity<PaginationResponse<AuthorDTO>>
+    override fun findAll(pageable: Pageable): ResponseEntity<PaginationResponse<AuthorDTO>>
 
     @ApiOperation(value = "Update an Author by id")
     @ApiResponses(
