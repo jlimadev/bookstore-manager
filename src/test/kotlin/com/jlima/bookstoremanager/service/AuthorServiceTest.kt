@@ -130,17 +130,18 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
             val expectedFoundEntities = listOf(defaultDTO.copy(id = entityId.toString()))
-            val pageable = PageRequest.of(0, 5, Sort.by("name"))
+            val pageable = PageRequest.of(0, 5, Sort.by("name").ascending())
             val expectedPaginationResponse = PaginationResponse(
                 totalPages = 1,
                 totalItems = 1,
                 currentPage = 0,
+                currentItems = 1,
                 data = expectedFoundEntities
             )
 
             // Then
             whenever(authorRepository.findAll(pageable)).thenReturn((PageImpl(listOf(defaultEntity))))
-            val response = sut.findAll(page = pageable.pageNumber, size = pageable.pageSize)
+            val response = sut.findAll(pageable)
 
             // Assert
             assertEquals(expectedPaginationResponse, response)
@@ -159,7 +160,7 @@ internal class AuthorServiceTest {
 
             // Assert
             val exception = assertThrows<BusinessEmptyResponseException> {
-                sut.findAll(page = pageable.pageNumber, size = pageable.pageSize)
+                sut.findAll(pageable)
             }
 
             assertEquals(expectedErrorMessage, exception.message)

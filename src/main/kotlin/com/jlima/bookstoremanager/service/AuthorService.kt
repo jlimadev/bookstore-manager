@@ -9,8 +9,7 @@ import com.jlima.bookstoremanager.providers.entity.domain.AuthorEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.AuthorRepository
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -29,9 +28,7 @@ class AuthorService(
         return findEntityById(id).toDTO()
     }
 
-    override fun findAll(page: Int, size: Int): PaginationResponse<AuthorDTO> {
-        val sort = Sort.by("name").ascending()
-        val pageable = PageRequest.of(page, size, sort)
+    override fun findAll(pageable: Pageable): PaginationResponse<AuthorDTO> {
         val databaseResult = authorRepository.findAll(pageable)
         val authorsList = databaseResult.toList()
 
@@ -43,6 +40,7 @@ class AuthorService(
             totalPages = databaseResult.totalPages,
             totalItems = databaseResult.totalElements.toInt(),
             currentPage = databaseResult.number,
+            currentItems = databaseResult.numberOfElements,
             data = authorsList.map { it.toDTO() }
         )
     }
