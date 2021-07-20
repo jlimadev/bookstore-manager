@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.response.toPaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
@@ -36,13 +37,7 @@ class AuthorService(
             throw BusinessEmptyResponseException(AvailableEntities.AUTHOR)
         }
 
-        return PaginationResponse(
-            totalPages = databaseResult.totalPages,
-            totalItems = databaseResult.totalElements.toInt(),
-            currentPage = databaseResult.number,
-            currentItems = databaseResult.numberOfElements,
-            data = authorsList.map { it.toDTO() }
-        )
+        return databaseResult.toPaginationResponse(authorsList.map { it.toDTO() })
     }
 
     override fun update(id: UUID, entity: AuthorDTO): AuthorDTO {
