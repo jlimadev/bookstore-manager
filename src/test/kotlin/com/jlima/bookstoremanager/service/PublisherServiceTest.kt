@@ -1,12 +1,15 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.PublisherEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.PublisherRepository
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -89,6 +92,22 @@ internal class PublisherServiceTest {
             // Assert
             assertEquals(expectedResponse, response)
             verify(publisherRepository, times(1)).findById(entityId)
+        }
+
+        @Test
+        fun `It should throw a EntityNotFoundException when call findById with non-existing id`() {
+            // Arrange
+            val (sut, publisherRepository) = makeSut()
+            val randomId = UUID.randomUUID()
+            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} with id $randomId not found."
+            whenever(publisherRepository.findById(randomId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.findById(randomId) }
+
+            // Assert
+            assertEquals(expectedErrorMessage, exception.message)
+            verify(publisherRepository, times(1)).findById(randomId)
         }
     }
 
