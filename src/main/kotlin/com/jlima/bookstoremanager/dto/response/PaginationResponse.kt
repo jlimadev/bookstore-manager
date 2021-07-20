@@ -4,5 +4,6 @@ data class PaginationResponse<T>(
     val totalPages: Int,
     val totalItems: Int,
     val currentPage: Int,
+    val currentItems: Int,
     val data: List<T>
 )
