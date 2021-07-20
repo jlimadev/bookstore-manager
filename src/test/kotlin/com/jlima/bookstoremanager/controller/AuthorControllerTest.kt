@@ -23,6 +23,8 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -206,29 +208,51 @@ class AuthorControllerTest {
     @DisplayName("[GET] - FindAll")
     inner class FindAll {
         @Test
-        fun `It should return a list of Authors and status 200 (OK) when GET All`() {
+        fun `It should return status 200 (OK) and a list of Authors when getAll with Custom Pageable parameters`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
+            val customPageable = PageRequest.of(0, 15, Sort.by("any").descending())
             val listOfEntities = listOf(defaultDTO.copy(id = entityId.toString()))
             val expectedPaginationResponse = PaginationResponse(
                 totalPages = 1,
                 totalItems = 1,
                 currentPage = 0,
+                currentItems = 1,
                 data = listOfEntities
             )
 
             // Act
-            whenever(authorService.findAll(page = 0, size = 10)).thenReturn(expectedPaginationResponse)
+            whenever(authorService.findAll(customPageable)).thenReturn(expectedPaginationResponse)
 
             // Assert
-            mockMvc.get("/authors")
+            mockMvc.get("/authors") {
+                contentType = MediaType.APPLICATION_JSON
+                param("page", "0")
+                param("size", "15")
+                param("sort", "any,desc")
+            }
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedPaginationResponse.toJson()) }
                 }
-            verify(authorService, times(1)).findAll(page = 0, size = 10)
+            verify(authorService, times(1)).findAll(customPageable)
+        }
+
+        @Test
+        fun `It should return status 200 (OK) and call getAll using default pageable params when nothing is passed`() {
+            // Arrange
+            val defaultPageable = PageRequest.of(0, 10, Sort.by("name").ascending())
+
+            // Assert
+            mockMvc.get("/authors")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                }
+
+            verify(authorService, times(1)).findAll(defaultPageable)
         }
 
         @Test
@@ -237,7 +261,7 @@ class AuthorControllerTest {
             val expectedErrorMessage = "Entity not found! No AUTHOR(s) found. Please check you request."
 
             // Act
-            whenever(authorService.findAll(page = 0, size = 10)).thenThrow(
+            whenever(authorService.findAll(any())).thenThrow(
                 BusinessEmptyResponseException(AvailableEntities.AUTHOR)
             )
 
@@ -251,7 +275,7 @@ class AuthorControllerTest {
                     jsonPath("$.error", Is.`is`("Not Found"))
                     jsonPath("$.message", equalTo(expectedErrorMessage))
                 }
-            verify(authorService, times(1)).findAll(page = 0, size = 10)
+            verify(authorService, times(1)).findAll(any())
         }
     }
 
