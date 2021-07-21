@@ -2,6 +2,7 @@ package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.PublisherEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
@@ -14,6 +15,9 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.Instant
 import java.util.Date
 import java.util.Optional
@@ -111,8 +115,25 @@ internal class PublisherServiceTest {
         }
     }
 
-    @Test
-    fun findAll() {
+    @Nested
+    @DisplayName("FindAll")
+    inner class FindAll {
+
+        @Test
+        fun `It should throw BusinessEmptyResponseException when call findAll and it returns an empty response`() {
+            // Arrange
+            val (sut, publisherRepository) = makeSut()
+            val expectedErrorMessage = "No ${AvailableEntities.PUBLISHER}(s) found."
+            val pageable = PageRequest.of(1, 1, Sort.by("any"))
+            whenever(publisherRepository.findAll(pageable)).thenReturn(Page.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEmptyResponseException> { sut.findAll(pageable) }
+
+            // Assert
+            assertEquals(expectedErrorMessage, exception.message)
+            verify(publisherRepository, times(1)).findAll(pageable)
+        }
     }
 
     @Test
