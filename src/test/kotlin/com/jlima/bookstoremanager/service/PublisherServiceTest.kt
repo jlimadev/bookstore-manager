@@ -205,9 +205,35 @@ internal class PublisherServiceTest {
 
     @Nested
     @DisplayName("Delete")
-    inner class Delete
+    inner class Delete {
+        @Test
+        fun `It should throw BusinessNotFoundEntityException when call delete to non-existing entity`() {
+            // Arrange
+            val (sut, publisherRepository) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            whenever(publisherRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Assert
+            assertThrows<BusinessEntityNotFoundException> { sut.delete(nonExistingId) }
+            verify(publisherRepository, times(1)).findById(nonExistingId)
+            verify(publisherRepository, never()).delete(any())
+        }
+    }
 
     @Nested
     @DisplayName("Delete (Soft)")
-    inner class DeleteSoft
+    inner class DeleteSoft {
+        @Test
+        fun `It should throw BusinessNotFoundEntityException when call deleteSoft to non-existing entity`() {
+            // Arrange
+            val (sut, publisherRepository) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            whenever(publisherRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Assert
+            assertThrows<BusinessEntityNotFoundException> { sut.deleteSoft(nonExistingId) }
+            verify(publisherRepository, times(1)).findById(nonExistingId)
+            verify(publisherRepository, never()).save(any())
+        }
+    }
 }
