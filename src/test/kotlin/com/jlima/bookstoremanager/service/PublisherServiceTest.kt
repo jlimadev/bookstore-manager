@@ -207,6 +207,22 @@ internal class PublisherServiceTest {
     @DisplayName("Delete")
     inner class Delete {
         @Test
+        fun `It should delete successfully`() {
+            // Arrange
+            val (sut, publisherRepository, _, defaultEntity, entityId) = makeSut()
+            whenever(publisherRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+            val expectedResponse = "Success on deleting Publisher $entityId: ${defaultEntity.name}"
+
+            // Act
+            val response = sut.delete(entityId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(publisherRepository, times(1)).findById(entityId)
+            verify(publisherRepository, times(1)).delete(defaultEntity)
+        }
+
+        @Test
         fun `It should throw BusinessNotFoundEntityException when call delete to non-existing entity`() {
             // Arrange
             val (sut, publisherRepository) = makeSut()
