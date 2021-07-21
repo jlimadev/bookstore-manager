@@ -161,15 +161,34 @@ internal class PublisherServiceTest {
         }
     }
 
-    @Test
-    fun update() {
+    @Nested
+    @DisplayName("Update")
+    inner class Update {
+        @Test
+        fun `It should update successfully`() {
+            // Arrange
+            val (sut, publisherRepository, defaultDTO, defaultEntity, entityId) = makeSut()
+            val updateDataDTO = defaultDTO.copy(name = "Updated name", code = "Updated Code")
+            val updatedEntity = defaultEntity.copy(name = updateDataDTO.name, code = updateDataDTO.code)
+            val expectedResponse = updateDataDTO.copy(id = entityId.toString())
+            whenever(publisherRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+            whenever(publisherRepository.save(updatedEntity)).thenReturn(updatedEntity)
+
+            // Act
+            val response = sut.update(entityId, updateDataDTO)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(publisherRepository, times(1)).findById(entityId)
+            verify(publisherRepository, times(1)).save(updatedEntity)
+        }
     }
 
-    @Test
-    fun delete() {
-    }
+    @Nested
+    @DisplayName("Delete")
+    inner class Delete
 
-    @Test
-    fun deleteSoft() {
-    }
+    @Nested
+    @DisplayName("Delete (Soft)")
+    inner class DeleteSoft
 }
