@@ -12,7 +12,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -181,6 +183,23 @@ internal class PublisherServiceTest {
             assertEquals(expectedResponse, response)
             verify(publisherRepository, times(1)).findById(entityId)
             verify(publisherRepository, times(1)).save(updatedEntity)
+        }
+
+        @Test
+        fun `It should throw BusinessNotFoundEntityException when call update to non-existing entity`() {
+            // Arrange
+            val (sut, publisherRepository, defaultDTO) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} with id $nonExistingId not found."
+            whenever(publisherRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.update(nonExistingId, defaultDTO) }
+
+            // Assert
+            assertEquals(expectedErrorMessage, exception.message)
+            verify(publisherRepository, times(1)).findById(nonExistingId)
+            verify(publisherRepository, never()).save(any())
         }
     }
 
