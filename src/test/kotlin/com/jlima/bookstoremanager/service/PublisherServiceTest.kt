@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
@@ -16,6 +17,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import java.time.Instant
@@ -118,6 +120,29 @@ internal class PublisherServiceTest {
     @Nested
     @DisplayName("FindAll")
     inner class FindAll {
+        @Test
+        fun `It should return a list of publisher when findAll is called`() {
+            // Arrange
+            val (sut, publisherRepository, defaultDTO, defaultEntity, entityId) = makeSut()
+            val expectedFoundEntities = listOf(defaultDTO.copy(id = entityId.toString()))
+            val pageable = PageRequest.of(0, 5, Sort.by("any").ascending())
+            val expectedPaginationResponse = PaginationResponse(
+                totalPages = 1,
+                totalItems = 1,
+                currentPage = 0,
+                currentItems = 1,
+                data = expectedFoundEntities
+            )
+
+            whenever(publisherRepository.findAll(pageable)).thenReturn((PageImpl(listOf(defaultEntity))))
+
+            // Act
+            val response = sut.findAll(pageable)
+
+            // Assert
+            assertEquals(expectedPaginationResponse, response)
+            verify(publisherRepository, times(1)).findAll(pageable)
+        }
 
         @Test
         fun `It should throw BusinessEmptyResponseException when call findAll and it returns an empty response`() {
