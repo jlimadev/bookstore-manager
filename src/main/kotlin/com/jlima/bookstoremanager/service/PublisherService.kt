@@ -52,7 +52,7 @@ class PublisherService(
     override fun deleteSoft(id: UUID): String {
         val foundPublisher = findEntityById(id)
         foundPublisher.isActive = false
-        publisherRepository.save(foundPublisher).toDTO()
+        publisherRepository.save(foundPublisher)
         return "Success on (soft) deleting Publisher $id: ${foundPublisher.name}"
     }
 

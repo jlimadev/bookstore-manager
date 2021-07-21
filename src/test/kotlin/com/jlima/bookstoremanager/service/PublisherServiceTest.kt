@@ -240,6 +240,24 @@ internal class PublisherServiceTest {
     @DisplayName("Delete (Soft)")
     inner class DeleteSoft {
         @Test
+        fun `It should update isActive to false when call deleteSoft method`() {
+            // Arrange
+            val (sut, publisherRepository, _, defaultEntity, entityId) = makeSut()
+            val expectedDeletedEntity = defaultEntity.copy(isActive = false)
+            val expectedResponse = "Success on (soft) deleting Publisher $entityId: ${defaultEntity.name}"
+
+            whenever(publisherRepository.findById(entityId)).thenReturn(Optional.of(defaultEntity))
+
+            // Act
+            val response = sut.deleteSoft(entityId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(publisherRepository, times(1)).save(expectedDeletedEntity)
+            verify(publisherRepository, never()).delete(any())
+        }
+
+        @Test
         fun `It should throw BusinessNotFoundEntityException when call deleteSoft to non-existing entity`() {
             // Arrange
             val (sut, publisherRepository) = makeSut()
