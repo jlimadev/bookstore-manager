@@ -1,21 +1,30 @@
 package com.jlima.bookstoremanager.controller.publisher
 
 import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.PublisherService
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasItems
+import org.hamcrest.core.Is
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -162,8 +171,77 @@ internal class PublisherControllerTest {
         }
     }
 
-    @Test
-    fun findAll() {
+    @Nested
+    @DisplayName("[GET] - FindAll")
+    inner class FindAll {
+        @Test
+        fun `It should return status 200 (OK) and a list of Publishers when getAll with Custom Pageable parameters`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val customPageable = PageRequest.of(0, 15, Sort.by("any").descending())
+            val listOfEntities = listOf(defaultDTO.copy(id = entityId.toString()))
+            val expectedPaginationResponse = PaginationResponse(
+                totalPages = 1,
+                totalItems = 1,
+                currentPage = 0,
+                currentItems = 1,
+                data = listOfEntities
+            )
+
+            // Act
+            whenever(publisherService.findAll(customPageable)).thenReturn(expectedPaginationResponse)
+
+            // Assert
+            mockMvc.get(basePath) {
+                contentType = MediaType.APPLICATION_JSON
+                param("page", "0")
+                param("size", "15")
+                param("sort", "any,desc")
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { json(expectedPaginationResponse.toJson()) }
+                }
+        }
+
+        @Test
+        fun `It should return status 200 (OK) and call getAll using default pageable params when nothing is passed`() {
+            // Arrange
+            val defaultPageable = PageRequest.of(0, 10, Sort.by("name").ascending())
+
+            // Assert
+            mockMvc.get(basePath)
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                }
+
+            verify(publisherService, times(1)).findAll(defaultPageable)
+        }
+
+        @Test
+        fun `It should not return 404 (Not Found) when GET returns nothing`() {
+            // Arrange
+            val expectedErrorMessage = "Entity not found! No PUBLISHER(s) found. Please check you request."
+
+            // Act
+            whenever(publisherService.findAll(any())).thenThrow(
+                BusinessEmptyResponseException(AvailableEntities.PUBLISHER)
+            )
+
+            // Assert
+            mockMvc.get(basePath)
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", Is.`is`(404))
+                    jsonPath("$.error", Is.`is`("Not Found"))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedErrorMessage))
+                }
+        }
     }
 
     @Test
