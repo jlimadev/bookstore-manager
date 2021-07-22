@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.Instant
 import java.time.Period
@@ -30,6 +31,8 @@ internal class PublisherControllerTest {
 
     @MockBean
     private lateinit var publisherService: PublisherService
+
+    private val basePath = "/publishers"
 
     private data class SUT(
         val defaultDTO: PublisherDTO,
@@ -62,7 +65,7 @@ internal class PublisherControllerTest {
             whenever(publisherService.create(defaultDTO)).thenReturn(expectedResponse)
 
             // Assert
-            mockMvc.post("/publishers") {
+            mockMvc.post(basePath) {
                 contentType = MediaType.APPLICATION_JSON
                 content = defaultDTO.toJson()
             }
@@ -85,7 +88,7 @@ internal class PublisherControllerTest {
             val dateExpectedError = "Field: FOUNDATIONDATE: must be a date in the past or in the present"
 
             // Act
-            mockMvc.post("/publishers") {
+            mockMvc.post(basePath) {
                 contentType = MediaType.APPLICATION_JSON
                 content = invalidDTO.toJson()
             }
@@ -98,8 +101,25 @@ internal class PublisherControllerTest {
         }
     }
 
-    @Test
-    fun findById() {
+    @Nested
+    @DisplayName("[GET] - findById")
+    inner class FindById {
+        @Test
+        fun `It should return Status 200 (OK) when call with valid id`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val expectedResponse = defaultDTO.copy(id = entityId.toString())
+            whenever(publisherService.findById(entityId)).thenReturn(expectedResponse)
+
+            // Assert
+            mockMvc.get("$basePath/$entityId")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { json(expectedResponse.toJson()) }
+                }
+        }
     }
 
     @Test
