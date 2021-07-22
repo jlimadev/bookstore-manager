@@ -30,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.time.Instant
 import java.time.Period
 import java.util.Date
@@ -244,8 +245,109 @@ internal class PublisherControllerTest {
         }
     }
 
-    @Test
-    fun update() {
+    @Nested
+    @DisplayName("[PUT] - Update")
+    inner class Update {
+        @Test
+        fun `It should update and return status 200 (OK) when send existing id and valid body`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val requestBodyToUpdate = defaultDTO.copy(
+                name = "Updated name",
+                code = "Updated Code",
+                foundationDate = Date.from(Instant.now())
+            )
+            val expectedUpdatedResponse = requestBodyToUpdate.copy(id = entityId.toString())
+
+            // Act
+            whenever(publisherService.update(entityId, requestBodyToUpdate)).thenReturn(expectedUpdatedResponse)
+
+            // Assert
+            mockMvc.put("$basePath/$entityId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBodyToUpdate.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { expectedUpdatedResponse.toJson() }
+                }
+        }
+
+        @Test
+        fun `It should return status 400 (Bad Request) when PUT with no JSON body`() {
+            // Arrange
+            val sutData = makeSut()
+            val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
+
+            // Assert
+            mockMvc.put("$basePath/${sutData.entityId}")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(400))
+                    jsonPath("$.error", CoreMatchers.equalTo("Bad Request"))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedErrorMessage))
+                }
+        }
+
+        @Test
+        fun `It should return status 400 (Bad Request) when PUT with invalid data on JSON body`() {
+            // Arrange
+            val (defaultDTO, entityId) = makeSut()
+            val requestBodyToUpdate = defaultDTO.copy(name = "")
+            val expectedContainingErrors = listOf(
+                "Field: NAME: must not be empty",
+                "Field: NAME: size must be between 3 and 255"
+            )
+
+            // Assert
+            mockMvc.put("$basePath/$entityId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBodyToUpdate.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    jsonPath("$.statusCode", Is.`is`(400))
+                    jsonPath("$.error", Is.`is`("Bad Request"))
+                    jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
+                    jsonPath(
+                        "$.errors",
+                        CoreMatchers.hasItems(expectedContainingErrors[0], expectedContainingErrors[1])
+                    )
+                }
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when PUT with non-existing id`() {
+            // Arrange
+            val (defaultDTO) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(publisherService.update(nonExistingId, defaultDTO)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.put("$basePath/$nonExistingId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = defaultDTO.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", Is.`is`(404))
+                    jsonPath("$.error", Is.`is`("Not Found"))
+                }
+        }
     }
 
     @Test
