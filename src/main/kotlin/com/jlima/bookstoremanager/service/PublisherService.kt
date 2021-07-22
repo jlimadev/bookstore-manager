@@ -11,8 +11,10 @@ import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.PublisherRepository
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 import java.util.UUID
 
+@Service
 class PublisherService(
     private val publisherRepository: PublisherRepository
 ) : CrudService<PublisherDTO> {
