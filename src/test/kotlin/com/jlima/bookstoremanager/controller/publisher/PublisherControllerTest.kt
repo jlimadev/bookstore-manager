@@ -3,6 +3,7 @@ package com.jlima.bookstoremanager.controller.publisher
 import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.PublisherService
+import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import java.time.Instant
+import java.time.Period
 import java.util.Date
 import java.util.UUID
 
@@ -69,6 +71,29 @@ internal class PublisherControllerTest {
                     status { isCreated() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedResponse.toJson()) }
+                }
+        }
+
+        @Test
+        fun `It should return status 400 (BadRequest) when POST with invalid data`() {
+            // Arrange
+            val (defaultDTO) = makeSut()
+            val futureDate = Date.from(Instant.now().plus(Period.ofDays(10)))
+            val invalidDTO = defaultDTO.copy(name = "", code = "", foundationDate = futureDate)
+            val nameExpectedError = "Field: NAME: must not be empty"
+            val codeExpectedError = "Field: CODE: must not be empty"
+            val dateExpectedError = "Field: FOUNDATIONDATE: must be a date in the past or in the present"
+
+            // Act
+            mockMvc.post("/publishers") {
+                contentType = MediaType.APPLICATION_JSON
+                content = invalidDTO.toJson()
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.errors", hasItems(nameExpectedError, codeExpectedError, dateExpectedError))
                 }
         }
     }
