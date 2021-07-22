@@ -1,8 +1,11 @@
 package com.jlima.bookstoremanager.controller.publisher
 
 import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.PublisherService
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.DisplayName
@@ -133,6 +136,28 @@ internal class PublisherControllerTest {
                 .andExpect {
                     status { isBadRequest() }
                     jsonPath("$.errors", hasItem(expectedResponse))
+                }
+        }
+
+        @Test
+        fun `It should return Status 404 (Not Found) when call with non-existing entity`() {
+            // Arrange
+            val invalidId = UUID.randomUUID()
+            val expectedResponse = "Entity not found! PUBLISHER with id $invalidId not found. Please check you request."
+
+            whenever(publisherService.findById(invalidId)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.PUBLISHER,
+                    id = invalidId
+                )
+            )
+
+            // Assert
+            mockMvc.get("$basePath/$invalidId")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    jsonPath("$.message", equalTo(expectedResponse))
                 }
         }
     }
