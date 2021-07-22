@@ -1,22 +1,22 @@
-package com.jlima.bookstoremanager.controller
+package com.jlima.bookstoremanager.controller.publisher
 
-import com.jlima.bookstoremanager.controller.author.AuthorController
-import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
-import com.jlima.bookstoremanager.service.AuthorService
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.hasItems
+import com.jlima.bookstoremanager.service.PublisherService
+import org.hamcrest.CoreMatchers
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.hasItems
 import org.hamcrest.core.Is
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
-import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -33,28 +33,33 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.Instant
+import java.time.Period
 import java.util.Date
 import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
-@WebMvcTest(AuthorController::class)
-class AuthorControllerTest {
+@WebMvcTest(PublisherController::class)
+internal class PublisherControllerTest {
+
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @MockBean
-    private lateinit var authorService: AuthorService
+    private lateinit var publisherService: PublisherService
+
+    private val basePath = "/publishers"
 
     private data class SUT(
-        val defaultDTO: AuthorDTO,
+        val defaultDTO: PublisherDTO,
         val entityId: UUID,
     )
 
     private fun makeSut(): SUT {
         val entityId = UUID.randomUUID()
-        val defaultDTO = AuthorDTO(
-            name = "Jonathan Lima",
-            birthDate = Date.from(Instant.now())
+        val defaultDTO = PublisherDTO(
+            name = "Any Publisher Name",
+            code = "Any publisher code",
+            foundationDate = Date.from(Instant.now())
         )
 
         return SUT(
@@ -67,140 +72,104 @@ class AuthorControllerTest {
     @DisplayName("[POST] - Create")
     inner class Create {
         @Test
-        fun `It should created an Author and must return status 201 (Created) when POST with valid data`() {
+        fun `It return status 201 (Created) when POST with valid data`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
             val expectedResponse = defaultDTO.copy(id = entityId.toString())
 
-            // Act
-            whenever(authorService.create(any())).thenReturn(expectedResponse)
+            whenever(publisherService.create(defaultDTO)).thenReturn(expectedResponse)
 
             // Assert
-            mockMvc
-                .post("/authors") {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = defaultDTO.toJson()
-                }
+            mockMvc.post(basePath) {
+                contentType = MediaType.APPLICATION_JSON
+                content = defaultDTO.toJson()
+            }
                 .andDo { print() }
                 .andExpect {
                     status { isCreated() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedResponse.toJson()) }
                 }
-            verify(authorService, times(1)).create(defaultDTO)
         }
 
         @Test
         fun `It should return status 400 (BadRequest) when POST with invalid data`() {
             // Arrange
             val (defaultDTO) = makeSut()
+            val futureDate = Date.from(Instant.now().plus(Period.ofDays(10)))
+            val invalidDTO = defaultDTO.copy(name = "", code = "", foundationDate = futureDate)
+            val nameExpectedError = "Field: NAME: must not be empty"
+            val codeExpectedError = "Field: CODE: must not be empty"
+            val dateExpectedError = "Field: FOUNDATIONDATE: must be a date in the past or in the present"
 
             // Act
-            val invalidEntity = defaultDTO.copy(name = "")
-            val expectedContainingErrors = listOf(
-                "Field: NAME: must not be empty",
-                "Field: NAME: size must be between 3 and 255"
-            )
-
-            // Assert
-            mockMvc.post("/authors") {
+            mockMvc.post(basePath) {
                 contentType = MediaType.APPLICATION_JSON
-                content = invalidEntity.toJson()
+                content = invalidDTO.toJson()
             }
                 .andDo { print() }
                 .andExpect {
                     status { isBadRequest() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", Is.`is`(400))
-                    jsonPath("$.error", Is.`is`("Bad Request"))
-                    jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
-                    jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
+                    jsonPath("$.errors", hasItems(nameExpectedError, codeExpectedError, dateExpectedError))
                 }
-            verify(authorService, never()).create(any())
-        }
-
-        @Test
-        fun `It should return status 400 (BadRequest) when POST with no JSON body`() {
-            // Arrange
-            val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
-
-            // Assert
-            mockMvc.post("/authors")
-                .andDo { print() }
-                .andExpect {
-                    status { isBadRequest() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", equalTo(400))
-                    jsonPath("$.error", equalTo("Bad Request"))
-                    jsonPath("$.message", equalTo(expectedErrorMessage))
-                }
-            verify(authorService, never()).create(any())
         }
     }
 
     @Nested
-    @DisplayName("[GET] - FindById")
+    @DisplayName("[GET] - findById")
     inner class FindById {
         @Test
-        fun `It should get an Author by id and return status 200 (OK) when GET with valid id`() {
+        fun `It should return Status 200 (OK) when call with valid id`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
             val expectedResponse = defaultDTO.copy(id = entityId.toString())
-
-            // Act
-            whenever(authorService.findById(entityId)).thenReturn(expectedResponse)
+            whenever(publisherService.findById(entityId)).thenReturn(expectedResponse)
 
             // Assert
-            mockMvc.get("/authors/$entityId")
+            mockMvc.get("$basePath/$entityId")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    content { expectedResponse.toJson() }
+                    content { json(expectedResponse.toJson()) }
                 }
-            verify(authorService, times(1)).findById(entityId)
         }
 
         @Test
-        fun `It should return status 404 (Not Found) when GET with non-existing id`() {
+        fun `It should return Status 400 (Bad Request) when call with invalid uuid`() {
             // Arrange
-            val nonExistingId = UUID.randomUUID()
+            val expectedResponse = "Field ID: Invalid UUID string: anythingButId"
 
-            // Act
-            whenever(authorService.findById(nonExistingId)).thenThrow(
+            // Assert
+            mockMvc.get("$basePath/anythingButId")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    jsonPath("$.errors", hasItem(expectedResponse))
+                }
+        }
+
+        @Test
+        fun `It should return Status 404 (Not Found) when call with non-existing entity`() {
+            // Arrange
+            val invalidId = UUID.randomUUID()
+            val expectedResponse = "Entity not found! PUBLISHER with id $invalidId not found. Please check you request."
+
+            whenever(publisherService.findById(invalidId)).thenThrow(
                 BusinessEntityNotFoundException(
-                    entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    entity = AvailableEntities.PUBLISHER,
+                    id = invalidId
                 )
             )
 
             // Assert
-            mockMvc.get("/authors/$nonExistingId")
+            mockMvc.get("$basePath/$invalidId")
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", Is.`is`(404))
-                    jsonPath("$.error", Is.`is`("Not Found"))
+                    jsonPath("$.message", equalTo(expectedResponse))
                 }
-            verify(authorService, times(1)).findById(nonExistingId)
-        }
-
-        @Test
-        fun `It should return status 400 (Bad Request) when try to findById with non-uuid`() {
-            // Arrange
-            val expectedContainingError = "Field ID: Invalid UUID string: non-uuid"
-            // Assert
-            mockMvc.get("/authors/non-uuid")
-                .andDo { print() }
-                .andExpect {
-                    status { isBadRequest() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", equalTo(400))
-                    jsonPath("$.error", equalTo("Bad Request"))
-                    jsonPath("$.errors", hasItems(expectedContainingError))
-                }
-            verify(authorService, never()).findById(any())
         }
     }
 
@@ -208,7 +177,7 @@ class AuthorControllerTest {
     @DisplayName("[GET] - FindAll")
     inner class FindAll {
         @Test
-        fun `It should return status 200 (OK) and a list of Authors when getAll with Custom Pageable parameters`() {
+        fun `It should return status 200 (OK) and a list of Publishers when getAll with Custom Pageable parameters`() {
             // Arrange
             val (defaultDTO, entityId) = makeSut()
             val customPageable = PageRequest.of(0, 15, Sort.by("any").descending())
@@ -222,10 +191,10 @@ class AuthorControllerTest {
             )
 
             // Act
-            whenever(authorService.findAll(customPageable)).thenReturn(expectedPaginationResponse)
+            whenever(publisherService.findAll(customPageable)).thenReturn(expectedPaginationResponse)
 
             // Assert
-            mockMvc.get("/authors") {
+            mockMvc.get(basePath) {
                 contentType = MediaType.APPLICATION_JSON
                 param("page", "0")
                 param("size", "15")
@@ -237,7 +206,6 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedPaginationResponse.toJson()) }
                 }
-            verify(authorService, times(1)).findAll(customPageable)
         }
 
         @Test
@@ -246,36 +214,35 @@ class AuthorControllerTest {
             val defaultPageable = PageRequest.of(0, 10, Sort.by("name").ascending())
 
             // Assert
-            mockMvc.get("/authors")
+            mockMvc.get(basePath)
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                 }
 
-            verify(authorService, times(1)).findAll(defaultPageable)
+            verify(publisherService, times(1)).findAll(defaultPageable)
         }
 
         @Test
         fun `It should not return 404 (Not Found) when GET returns nothing`() {
             // Arrange
-            val expectedErrorMessage = "Entity not found! No AUTHOR(s) found. Please check you request."
+            val expectedErrorMessage = "Entity not found! No PUBLISHER(s) found. Please check you request."
 
             // Act
-            whenever(authorService.findAll(any())).thenThrow(
-                BusinessEmptyResponseException(AvailableEntities.AUTHOR)
+            whenever(publisherService.findAll(any())).thenThrow(
+                BusinessEmptyResponseException(AvailableEntities.PUBLISHER)
             )
 
             // Assert
-            mockMvc.get("/authors")
+            mockMvc.get(basePath)
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("$.statusCode", Is.`is`(404))
                     jsonPath("$.error", Is.`is`("Not Found"))
-                    jsonPath("$.message", equalTo(expectedErrorMessage))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedErrorMessage))
                 }
-            verify(authorService, times(1)).findAll(any())
         }
     }
 
@@ -288,15 +255,16 @@ class AuthorControllerTest {
             val (defaultDTO, entityId) = makeSut()
             val requestBodyToUpdate = defaultDTO.copy(
                 name = "Updated name",
-                birthDate = Date.from(Instant.now())
+                code = "Updated Code",
+                foundationDate = Date.from(Instant.now())
             )
             val expectedUpdatedResponse = requestBodyToUpdate.copy(id = entityId.toString())
 
             // Act
-            whenever(authorService.update(entityId, requestBodyToUpdate)).thenReturn(expectedUpdatedResponse)
+            whenever(publisherService.update(entityId, requestBodyToUpdate)).thenReturn(expectedUpdatedResponse)
 
             // Assert
-            mockMvc.put("/authors/$entityId") {
+            mockMvc.put("$basePath/$entityId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = requestBodyToUpdate.toJson()
             }
@@ -306,7 +274,6 @@ class AuthorControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { expectedUpdatedResponse.toJson() }
                 }
-            verify(authorService, times(1)).update(entityId, requestBodyToUpdate)
         }
 
         @Test
@@ -316,16 +283,15 @@ class AuthorControllerTest {
             val expectedErrorMessage = "Malformed JSON body. Check you JSON and try again."
 
             // Assert
-            mockMvc.put("/authors/${sutData.entityId}")
+            mockMvc.put("$basePath/${sutData.entityId}")
                 .andDo { print() }
                 .andExpect {
                     status { isBadRequest() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", equalTo(400))
-                    jsonPath("$.error", equalTo("Bad Request"))
-                    jsonPath("$.message", equalTo(expectedErrorMessage))
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(400))
+                    jsonPath("$.error", CoreMatchers.equalTo("Bad Request"))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedErrorMessage))
                 }
-            verify(authorService, never()).update(any(), any())
         }
 
         @Test
@@ -339,7 +305,7 @@ class AuthorControllerTest {
             )
 
             // Assert
-            mockMvc.put("/authors/$entityId") {
+            mockMvc.put("$basePath/$entityId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = requestBodyToUpdate.toJson()
             }
@@ -349,7 +315,10 @@ class AuthorControllerTest {
                     jsonPath("$.statusCode", Is.`is`(400))
                     jsonPath("$.error", Is.`is`("Bad Request"))
                     jsonPath("$.message", Is.`is`("Validation error, please check the arguments."))
-                    jsonPath("$.errors", hasItems(expectedContainingErrors[0], expectedContainingErrors[1]))
+                    jsonPath(
+                        "$.errors",
+                        CoreMatchers.hasItems(expectedContainingErrors[0], expectedContainingErrors[1])
+                    )
                 }
         }
 
@@ -360,7 +329,7 @@ class AuthorControllerTest {
             val nonExistingId = UUID.randomUUID()
 
             // Act
-            whenever(authorService.update(nonExistingId, defaultDTO)).thenThrow(
+            whenever(publisherService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
                     id = nonExistingId
@@ -368,7 +337,7 @@ class AuthorControllerTest {
             )
 
             // Assert
-            mockMvc.put("/authors/$nonExistingId") {
+            mockMvc.put("$basePath/$nonExistingId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = defaultDTO.toJson()
             }
@@ -379,7 +348,6 @@ class AuthorControllerTest {
                     jsonPath("$.statusCode", Is.`is`(404))
                     jsonPath("$.error", Is.`is`("Not Found"))
                 }
-            verify(authorService, times(1)).update(nonExistingId, defaultDTO)
         }
     }
 
@@ -392,17 +360,17 @@ class AuthorControllerTest {
             val (_, entityId) = makeSut()
             val expectedMessage = "Any deleted message"
 
-            whenever(authorService.delete(entityId)).thenReturn(expectedMessage)
+            whenever(publisherService.delete(entityId)).thenReturn(expectedMessage)
 
             // Assert
-            mockMvc.delete("/authors/$entityId")
+            mockMvc.delete("$basePath/$entityId")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.message", equalTo(expectedMessage))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedMessage))
                 }
-            verify(authorService, times(1)).delete(entityId)
+            verify(publisherService, times(1)).delete(entityId)
         }
 
         @Test
@@ -411,7 +379,7 @@ class AuthorControllerTest {
             val nonExistingId = UUID.randomUUID()
 
             // Act
-            whenever(authorService.delete(nonExistingId)).thenThrow(
+            whenever(publisherService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
                     id = nonExistingId
@@ -419,15 +387,15 @@ class AuthorControllerTest {
             )
 
             // Assert
-            mockMvc.delete("/authors/$nonExistingId")
+            mockMvc.delete("$basePath/$nonExistingId")
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", equalTo(404))
-                    jsonPath("$.error", equalTo("Not Found"))
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(404))
+                    jsonPath("$.error", CoreMatchers.equalTo("Not Found"))
                 }
-            verify(authorService, times(1)).delete(nonExistingId)
+            verify(publisherService, times(1)).delete(nonExistingId)
         }
     }
 
@@ -440,17 +408,17 @@ class AuthorControllerTest {
             val (_, entityId) = makeSut()
             val expectedMessage = "Any deleted message"
 
-            whenever(authorService.deleteSoft(entityId)).thenReturn(expectedMessage)
+            whenever(publisherService.deleteSoft(entityId)).thenReturn(expectedMessage)
 
             // Assert
-            mockMvc.delete("/authors/$entityId/soft")
+            mockMvc.delete("$basePath/$entityId/soft")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.message", equalTo(expectedMessage))
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedMessage))
                 }
-            verify(authorService, times(1)).deleteSoft(entityId)
+            verify(publisherService, times(1)).deleteSoft(entityId)
         }
 
         @Test
@@ -459,7 +427,7 @@ class AuthorControllerTest {
             val nonExistingId = UUID.randomUUID()
 
             // Act
-            whenever(authorService.deleteSoft(nonExistingId)).thenThrow(
+            whenever(publisherService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
                     id = nonExistingId
@@ -467,15 +435,15 @@ class AuthorControllerTest {
             )
 
             // Assert
-            mockMvc.delete("/authors/$nonExistingId/soft")
+            mockMvc.delete("$basePath/$nonExistingId/soft")
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.statusCode", equalTo(404))
-                    jsonPath("$.error", equalTo("Not Found"))
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(404))
+                    jsonPath("$.error", CoreMatchers.equalTo("Not Found"))
                 }
-            verify(authorService, times(1)).deleteSoft(nonExistingId)
+            verify(publisherService, times(1)).deleteSoft(nonExistingId)
         }
     }
 }

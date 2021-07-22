@@ -1,5 +1,6 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
+import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
 import java.util.UUID
@@ -35,5 +36,18 @@ data class PublisherEntity(
     var isActive: Boolean = true,
 
     @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY)
-    val books: List<BookEntity>,
+    val books: List<BookEntity> = listOf(),
 ) : AuditableEntity()
+
+fun PublisherDTO.toEntity() = PublisherEntity(
+    name = this.name,
+    code = this.code,
+    foundationDate = this.foundationDate
+)
+
+fun PublisherEntity.toDTO() = PublisherDTO(
+    id = this.id.toString(),
+    name = this.name,
+    code = this.code,
+    foundationDate = this.foundationDate
+)

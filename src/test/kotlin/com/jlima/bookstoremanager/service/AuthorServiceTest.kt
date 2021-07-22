@@ -130,7 +130,7 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository, defaultDTO, defaultEntity, entityId) = makeSut()
             val expectedFoundEntities = listOf(defaultDTO.copy(id = entityId.toString()))
-            val pageable = PageRequest.of(0, 5, Sort.by("name").ascending())
+            val pageable = PageRequest.of(0, 5, Sort.by("any").ascending())
             val expectedPaginationResponse = PaginationResponse(
                 totalPages = 1,
                 totalItems = 1,
@@ -153,7 +153,7 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val expectedErrorMessage = "No ${AvailableEntities.AUTHOR}(s) found."
-            val pageable = PageRequest.of(1, 1, Sort.by("name"))
+            val pageable = PageRequest.of(1, 1, Sort.by("any"))
 
             // Act
             whenever(authorRepository.findAll(pageable)).thenReturn(Page.empty())
