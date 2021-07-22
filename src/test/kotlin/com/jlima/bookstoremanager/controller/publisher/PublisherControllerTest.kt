@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
@@ -350,11 +351,99 @@ internal class PublisherControllerTest {
         }
     }
 
-    @Test
-    fun delete() {
+    @Nested
+    @DisplayName("[DELETE] - Delete - Hard")
+    inner class Delete {
+        @Test
+        fun `It should delete and return status 200 (OK) when send existing id to delete`() {
+            // Arrange
+            val (_, entityId) = makeSut()
+            val expectedMessage = "Any deleted message"
+
+            whenever(publisherService.delete(entityId)).thenReturn(expectedMessage)
+
+            // Assert
+            mockMvc.delete("$basePath/$entityId")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedMessage))
+                }
+            verify(publisherService, times(1)).delete(entityId)
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when DELETE with non-existing id`() {
+            // Arrange
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(publisherService.delete(nonExistingId)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.delete("$basePath/$nonExistingId")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(404))
+                    jsonPath("$.error", CoreMatchers.equalTo("Not Found"))
+                }
+            verify(publisherService, times(1)).delete(nonExistingId)
+        }
     }
 
-    @Test
-    fun deleteSoft() {
+    @Nested
+    @DisplayName("[DELETE] - Delete - Soft")
+    inner class DeleteSoft {
+        @Test
+        fun `It should delete and return status 200 (OK) when send existing id to delete`() {
+            // Arrange
+            val (_, entityId) = makeSut()
+            val expectedMessage = "Any deleted message"
+
+            whenever(publisherService.deleteSoft(entityId)).thenReturn(expectedMessage)
+
+            // Assert
+            mockMvc.delete("$basePath/$entityId/soft")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.message", CoreMatchers.equalTo(expectedMessage))
+                }
+            verify(publisherService, times(1)).deleteSoft(entityId)
+        }
+
+        @Test
+        fun `It should return status 404 (Not Found) when DELETE with non-existing id`() {
+            // Arrange
+            val nonExistingId = UUID.randomUUID()
+
+            // Act
+            whenever(publisherService.deleteSoft(nonExistingId)).thenThrow(
+                BusinessEntityNotFoundException(
+                    entity = AvailableEntities.AUTHOR,
+                    id = nonExistingId
+                )
+            )
+
+            // Assert
+            mockMvc.delete("$basePath/$nonExistingId/soft")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("$.statusCode", CoreMatchers.equalTo(404))
+                    jsonPath("$.error", CoreMatchers.equalTo("Not Found"))
+                }
+            verify(publisherService, times(1)).deleteSoft(nonExistingId)
+        }
     }
 }
