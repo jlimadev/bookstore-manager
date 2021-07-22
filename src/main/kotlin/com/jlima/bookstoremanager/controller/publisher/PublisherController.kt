@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/publishers")
@@ -29,7 +30,7 @@ class PublisherController(
     private val publisherService: PublisherService
 ) : BaseController<PublisherDTO> {
     @PostMapping
-    override fun create(@RequestBody entity: PublisherDTO): ResponseEntity<PublisherDTO> {
+    override fun create(@RequestBody @Valid entity: PublisherDTO): ResponseEntity<PublisherDTO> {
         return ResponseEntity(publisherService.create(entity), HttpStatus.CREATED)
     }
 
@@ -50,7 +51,7 @@ class PublisherController(
     }
 
     @PutMapping("/{id}")
-    override fun update(@PathVariable id: UUID, @RequestBody body: PublisherDTO): ResponseEntity<PublisherDTO> {
+    override fun update(@PathVariable id: UUID, @RequestBody @Valid body: PublisherDTO): ResponseEntity<PublisherDTO> {
         return ResponseEntity(publisherService.update(id, body), HttpStatus.OK)
     }
 
