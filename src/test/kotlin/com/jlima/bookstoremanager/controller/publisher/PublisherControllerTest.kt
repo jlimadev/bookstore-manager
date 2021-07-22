@@ -3,6 +3,7 @@ package com.jlima.bookstoremanager.controller.publisher
 import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.PublisherService
+import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -118,6 +119,20 @@ internal class PublisherControllerTest {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                     content { json(expectedResponse.toJson()) }
+                }
+        }
+
+        @Test
+        fun `It should return Status 400 (Bad Request) when call with invalid uuid`() {
+            // Arrange
+            val expectedResponse = "Field ID: Invalid UUID string: anythingButId"
+
+            // Assert
+            mockMvc.get("$basePath/anythingButId")
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    jsonPath("$.errors", hasItem(expectedResponse))
                 }
         }
     }
