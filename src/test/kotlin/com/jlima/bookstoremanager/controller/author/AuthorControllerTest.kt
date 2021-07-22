@@ -1,6 +1,5 @@
-package com.jlima.bookstoremanager.controller
+package com.jlima.bookstoremanager.controller.author
 
-import com.jlima.bookstoremanager.controller.author.AuthorController
 import com.jlima.bookstoremanager.dto.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
