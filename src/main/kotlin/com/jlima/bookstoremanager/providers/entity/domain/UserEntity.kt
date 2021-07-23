@@ -1,7 +1,8 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
-import com.jlima.bookstoremanager.core.Gender
 import com.jlima.bookstoremanager.dto.UserDTO
+import com.jlima.bookstoremanager.enums.Gender
+import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
 import java.util.UUID
@@ -36,14 +37,15 @@ data class UserEntity(
     @Temporal(TemporalType.TIMESTAMP)
     var birthDate: Date,
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     var email: String,
 
     @Column(name = "password")
     var password: String,
 
     @Column(name = "role")
-    var role: String,
+    @Enumerated(EnumType.STRING)
+    var role: Role,
 
     @Column(name = "is_active")
     var isActive: Boolean = true,
