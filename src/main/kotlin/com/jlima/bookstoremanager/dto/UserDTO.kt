@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.helper.ValidUUID
-import org.hibernate.validator.constraints.UniqueElements
 import java.util.Date
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -25,7 +24,6 @@ data class UserDTO(
 
     @Enumerated(EnumType.STRING)
     @field:NotNull
-    @field:NotEmpty
     val gender: Gender,
 
     @field:NotNull
@@ -34,7 +32,6 @@ data class UserDTO(
 
     @field:NotNull
     @field:NotEmpty
-    @field:UniqueElements
     @field:Email
     val email: String,
 
@@ -46,6 +43,5 @@ data class UserDTO(
 
     @Enumerated(EnumType.STRING)
     @field:NotNull
-    @field:NotEmpty
     val role: Role,
 )
