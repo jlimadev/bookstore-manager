@@ -220,4 +220,76 @@ internal class UserServiceTest {
             verify(userRepository, never()).save(any())
         }
     }
+
+    @Nested
+    @DisplayName("Delete")
+    inner class Delete {
+        @Test
+        fun `It should delete successfully`() {
+            // Arrange
+            val (sut, userRepository, _, userEntity, userId) = makeSut()
+            whenever(userRepository.findById(userId)).thenReturn(Optional.of(userEntity))
+            val expectedResponse = "Success on deleting User $userId: ${userEntity.name}"
+
+            // Act
+            val response = sut.delete(userId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(userRepository, times(1)).findById(userId)
+            verify(userRepository, times(1)).delete(userEntity)
+        }
+
+        @Test
+        fun `It should throw BusinessNotFoundEntityException when call delete to non-existing entity`() {
+            // Arrange
+            val (sut, userRepository) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            whenever(userRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Assert
+            assertThrows<BusinessEntityNotFoundException> { sut.delete(nonExistingId) }
+            verify(userRepository, times(1)).findById(nonExistingId)
+            verify(userRepository, never()).delete(any())
+        }
+    }
+
+    @Nested
+    @DisplayName("Delete (soft)")
+    inner class DeleteSoft {
+        @Test
+        fun `It should update isActive to false when call delete method`() {
+            // Arrange
+            val (sut, userRepository, _, userEntity, userId) = makeSut()
+            val expectedDeletedEntity = userEntity.copy(isActive = false)
+            val expectedResponse = "Success on (soft) deleting User $userId: ${userEntity.name}"
+
+            whenever(userRepository.findById(userId)).thenReturn(Optional.of(userEntity))
+
+            // Act
+            val response = sut.deleteSoft(userId)
+
+            // Assert
+            assertEquals(expectedResponse, response)
+            verify(userRepository, times(1)).save(expectedDeletedEntity)
+            verify(userRepository, never()).delete(any())
+        }
+
+        @Test
+        fun `It should throw BusinessEntityNotFoundException when call delete passing non-existing id`() {
+            // Arrange
+            val (sut, authorRepository) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            val expectedMessage = "${AvailableEntities.USER} with id $nonExistingId not found."
+            whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> { sut.deleteSoft(nonExistingId) }
+
+            // Assert
+            kotlin.test.assertEquals(expectedMessage, exception.message)
+            verify(authorRepository, times(1)).findById(nonExistingId)
+            verify(authorRepository, never()).save(any())
+        }
+    }
 }

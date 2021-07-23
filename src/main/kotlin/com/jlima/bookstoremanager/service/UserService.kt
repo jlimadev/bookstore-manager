@@ -53,11 +53,16 @@ class UserService(
     }
 
     override fun delete(id: UUID): String {
-        TODO("Not yet implemented")
+        val user = findEntityById(id)
+        userRepository.delete(user)
+        return "Success on deleting User $id: ${user.name}"
     }
 
     override fun deleteSoft(id: UUID): String {
-        TODO("Not yet implemented")
+        val user = findEntityById(id)
+        user.isActive = false
+        userRepository.save(user)
+        return "Success on (soft) deleting User $id: ${user.name}"
     }
 
     private fun findEntityById(id: UUID): UserEntity {
