@@ -1,6 +1,7 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
 import com.jlima.bookstoremanager.core.Gender
+import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
 import java.util.UUID
@@ -50,3 +51,22 @@ data class UserEntity(
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     var books: List<BookEntity> = listOf(),
 ) : AuditableEntity()
+
+fun UserDTO.toEntity() = UserEntity(
+    name = this.name,
+    gender = this.gender,
+    birthDate = this.birthDate,
+    email = this.email,
+    password = this.password,
+    role = this.role
+)
+
+fun UserEntity.toDTO() = UserDTO(
+    id = this.id.toString(),
+    name = this.name,
+    gender = this.gender,
+    birthDate = this.birthDate,
+    email = this.email,
+    password = this.password,
+    role = this.role
+)
