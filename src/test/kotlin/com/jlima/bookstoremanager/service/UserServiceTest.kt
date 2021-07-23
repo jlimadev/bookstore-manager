@@ -179,4 +179,45 @@ internal class UserServiceTest {
             assertEquals(expectedErrorMessage, exception.message)
         }
     }
+
+    @Nested
+    @DisplayName("Update")
+    inner class Update {
+        @Test
+        fun `It should update successfully`() {
+            // Arrange
+            val (sut, userRepository, userDTO, userEntity, userId) = makeSut()
+            val updatedDTO = userDTO.copy(name = "Updated name")
+            val updatedEntity = userEntity.copy(name = updatedDTO.name)
+            val expectedResult = updatedEntity.toDTO().copy(id = userId.toString())
+            whenever(userRepository.findById(userId)).thenReturn(Optional.of(userEntity))
+            whenever(userRepository.save(updatedEntity)).thenReturn(updatedEntity)
+
+            // Act
+            val result = sut.update(userId, updatedDTO)
+
+            // Assert
+            assertEquals(expectedResult, result)
+        }
+
+        @Test
+        fun `It should throw BusinessEntityNotFoundException when call update and it returns an empty response`() {
+            // Arrange
+            val (sut, userRepository, userDTO) = makeSut()
+            val nonExistingId = UUID.randomUUID()
+            val expectedMessage = "${AvailableEntities.USER} with id $nonExistingId not found."
+
+            whenever(userRepository.findById(nonExistingId)).thenReturn(Optional.empty())
+
+            // Act
+            val exception = assertThrows<BusinessEntityNotFoundException> {
+                sut.update(nonExistingId, userDTO)
+            }
+
+            // Assert
+            assertEquals(expectedMessage, exception.message)
+            verify(userRepository, times(1)).findById(nonExistingId)
+            verify(userRepository, never()).save(any())
+        }
+    }
 }

@@ -40,7 +40,16 @@ class UserService(
     }
 
     override fun update(id: UUID, entity: UserDTO): UserDTO {
-        TODO("Not yet implemented")
+        val user = findEntityById(id)
+
+        user.name = entity.name
+        user.gender = entity.gender
+        user.birthDate = entity.birthDate
+        user.email = entity.email
+        user.password = entity.password
+        user.role = entity.role
+
+        return userRepository.save(user).toDTO()
     }
 
     override fun delete(id: UUID): String {
