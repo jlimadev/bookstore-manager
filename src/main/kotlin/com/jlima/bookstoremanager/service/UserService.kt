@@ -2,8 +2,12 @@ package com.jlima.bookstoremanager.service
 
 import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.response.toPaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
+import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityExistsException
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
+import com.jlima.bookstoremanager.providers.entity.domain.UserEntity
 import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.UserRepository
@@ -21,11 +25,18 @@ class UserService(
     }
 
     override fun findById(id: UUID): UserDTO {
-        TODO("Not yet implemented")
+        return findEntityById(id).toDTO()
     }
 
     override fun findAll(pageable: Pageable): PaginationResponse<UserDTO> {
-        TODO("Not yet implemented")
+        val databaseResult = userRepository.findAll(pageable)
+        val users = databaseResult.toList()
+
+        if (users.isEmpty()) {
+            throw BusinessEmptyResponseException(AvailableEntities.USER)
+        }
+
+        return databaseResult.toPaginationResponse(users.map { it.toDTO() })
     }
 
     override fun update(id: UUID, entity: UserDTO): UserDTO {
@@ -38,6 +49,11 @@ class UserService(
 
     override fun deleteSoft(id: UUID): String {
         TODO("Not yet implemented")
+    }
+
+    private fun findEntityById(id: UUID): UserEntity {
+        return userRepository.findById(id)
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, id) }
     }
 
     private fun checkEmailExists(email: String) {
