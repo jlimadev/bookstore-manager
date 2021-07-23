@@ -48,5 +48,5 @@ data class UserEntity(
     var isActive: Boolean = true,
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    var books: List<BookEntity>,
+    var books: List<BookEntity> = listOf(),
 ) : AuditableEntity()
