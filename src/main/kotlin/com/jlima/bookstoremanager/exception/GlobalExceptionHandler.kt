@@ -36,7 +36,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                 message = "Entity not found!"
             }
             is EntityExistsException -> {
-                statusCode = HttpStatus.BAD_REQUEST
+                statusCode = HttpStatus.CONFLICT
                 message = "This entity already exists!"
             }
             is MethodArgumentTypeMismatchException -> {
