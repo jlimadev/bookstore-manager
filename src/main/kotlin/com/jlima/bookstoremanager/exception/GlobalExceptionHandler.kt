@@ -36,7 +36,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                 message = "Entity not found!"
             }
             is EntityExistsException -> {
-                statusCode = HttpStatus.BAD_REQUEST
+                statusCode = HttpStatus.CONFLICT
                 message = "This entity already exists!"
             }
             is MethodArgumentTypeMismatchException -> {
@@ -87,7 +87,8 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         val message = "Malformed JSON body. Check you JSON and try again."
         val errorBody = buildExceptionEntity(
             httpStatus = statusCode,
-            message = message
+            message = message,
+            errors = listOf(exception.message?.split(";")?.get(0) ?: "")
         )
         return handleExceptionInternal(exception, errorBody, HttpHeaders(), statusCode, request)
     }

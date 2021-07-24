@@ -1,5 +1,5 @@
 package com.jlima.bookstoremanager.exception.model
 
 enum class AvailableEntities() {
-    AUTHOR, PUBLISHER
+    AUTHOR, PUBLISHER, USER
 }
