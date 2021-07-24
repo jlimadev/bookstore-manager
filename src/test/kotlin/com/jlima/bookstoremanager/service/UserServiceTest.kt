@@ -167,7 +167,7 @@ internal class UserServiceTest {
         @Test
         fun `It should throw BusinessEmptyResponseException when call findAll and it returns an empty response`() {
             // Arrange
-            val (sut, userRepository, _, userEntity) = makeSut()
+            val (sut, userRepository) = makeSut()
             val pageable: Pageable = mock()
             val expectedErrorMessage = "No ${AvailableEntities.USER}(s) found."
             whenever(userRepository.findAll(pageable)).thenReturn(Page.empty())
