@@ -49,19 +49,10 @@ class UserControllerTest {
 
     private val basePath = "/users"
 
-    private data class ExpectedResponse(
-        val id: String? = null,
-        val name: String,
-        val gender: Gender,
-        val birthDate: Date,
-        val email: String,
-        val role: Role,
-    )
-
     private data class SUT(
         val defaultDTO: UserDTO,
         val entityId: UUID,
-        val expectedResponse: ExpectedResponse
+        val jsonEntry: String,
     )
 
     private fun makeSut(): SUT {
@@ -75,19 +66,13 @@ class UserControllerTest {
             role = Role.ADMIN
         )
 
-        val expectedResponse = ExpectedResponse(
-            id = entityId.toString(),
-            name = defaultDTO.name,
-            gender = defaultDTO.gender,
-            birthDate = defaultDTO.birthDate,
-            email = defaultDTO.email,
-            role = defaultDTO.role
-        )
+        // to keep the password field on body request
+        val jsonEntry = defaultDTO.toEntity().toJson()
 
         return SUT(
             defaultDTO = defaultDTO,
             entityId = entityId,
-            expectedResponse = expectedResponse
+            jsonEntry = jsonEntry
         )
     }
 
@@ -97,7 +82,7 @@ class UserControllerTest {
         @Test
         fun `It return status 201 (Created) when POST with valid data`() {
             // Arrange
-            val (defaultDTO, entityId) = makeSut()
+            val (defaultDTO, entityId, jsonEntry) = makeSut()
             val expectedResponse = defaultDTO.copy(id = entityId.toString())
 
             whenever(userService.create(defaultDTO)).thenReturn(expectedResponse)
@@ -105,7 +90,7 @@ class UserControllerTest {
             // Assert
             mockMvc.post(basePath) {
                 contentType = MediaType.APPLICATION_JSON
-                content = defaultDTO.toEntity().toJson() // to keep the password field on body request
+                content = jsonEntry
             }
                 .andDo { print() }
                 .andExpect {
