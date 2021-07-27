@@ -28,6 +28,91 @@ Since this is a bean, we can inject in any class. In this case our service will 
 
 Check `UserService` and `UserServiceTest`.
 
+## User Roles
+We can create roles to our users:
+- In this project we've added as attribute to user, Role (enum).
+
+## Handle with Authenticated Users
+
+### UserDetails
+- We have to create a class to handle the authenticated users and return the user details. This class must implement UserDetails from SpringSecurity.
+  - It will retrieve basic information about the user, such as Username, Password, Roles, e more methods. 
+
+```kotlin
+class AuthenticatedUser(
+    private val username: String,
+    private val password: String,
+    private val role: String
+) : UserDetails {
+
+    companion object {
+        private const val ROLE_PREFIX = "ROLE_"
+    }
+
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return Collections.singletonList(SimpleGrantedAuthority("$ROLE_PREFIX$role"))
+    }
+
+    override fun getPassword(): String {
+        return password
+    }
+
+    override fun getUsername(): String {
+        return username
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
+    }
+}
+```
+
+### Authentication Service
+
+```kotlin
+@Service
+class AuthenticationService(
+    private val userRepository: UserRepository
+) : UserDetailsService {
+    override fun loadUserByUsername(username: String): UserDetails {
+        val user = userRepository.findByEmail(username)
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, username) }
+        return AuthenticatedUser(
+            username = user.email,
+            password = user.password,
+            role = user.role.name
+        )
+    }
+}
+```
+
+### Authentication Entrypoint
+
+```kotlin
+@Component
+class JwtAuthenticationEntrypoint : AuthenticationEntryPoint {
+    override fun commence(
+        request: HttpServletRequest?,
+        response: HttpServletResponse?,
+        authException: AuthenticationException?
+    ) {
+        response?.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+    }
+}
+```
+
 ## References
 
 - Official Docs
