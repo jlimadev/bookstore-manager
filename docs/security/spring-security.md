@@ -122,6 +122,7 @@ class JwtAuthenticationEntrypoint : AuthenticationEntryPoint {
 - Baeldung
   - List of
     Tutorial [Spring Security Authentication](https://www.baeldung.com/spring-security-authentication-and-registration)
+  - How to create [Config for Spring Security](https://www.baeldung.com/java-config-spring-security) ✔
   - [Roles and Privileges](https://www.baeldung.com/role-and-privilege-for-spring-security-registration)
   - [Prevent Brute Force](https://www.baeldung.com/spring-security-block-brute-force-authentication-attempts)
   - [Remember Me](https://www.baeldung.com/spring-security-remember-me)
