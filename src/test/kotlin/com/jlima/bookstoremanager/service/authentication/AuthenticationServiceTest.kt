@@ -2,12 +2,16 @@ package com.jlima.bookstoremanager.service.authentication
 
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
+import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.providers.entity.domain.UserEntity
 import com.jlima.bookstoremanager.providers.repository.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.time.Instant
@@ -46,5 +50,18 @@ internal class AuthenticationServiceTest {
         assertEquals(expectedUsername, result.username)
         assertEquals(expectedPassword, result.password)
         assertTrue(result.authorities.contains(expectedRole))
+    }
+
+    @Test
+    fun `It should throw BusinessEntityNotFoundException when username is not found`() {
+        // Arrange
+        val invalidEmail = "invalid@narnia.com"
+        whenever(userRepository.findByEmail(invalidEmail)).thenReturn(Optional.empty())
+
+        // Act
+        assertThrows<BusinessEntityNotFoundException> { authenticationService.loadUserByUsername(invalidEmail) }
+
+        // Assert
+        verify(userRepository, times(1)).findByEmail(invalidEmail)
     }
 }
