@@ -154,12 +154,12 @@ internal class PublisherControllerTest {
         fun `It should return Status 404 (Not Found) when call with non-existing entity`() {
             // Arrange
             val invalidId = UUID.randomUUID()
-            val expectedResponse = "Entity not found! PUBLISHER with id $invalidId not found. Please check you request."
+            val expectedResponse = "Entity not found! PUBLISHER $invalidId not found. Please check you request."
 
             whenever(publisherService.findById(invalidId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.PUBLISHER,
-                    id = invalidId
+                    identifier = invalidId.toString()
                 )
             )
 
@@ -332,7 +332,7 @@ internal class PublisherControllerTest {
             whenever(publisherService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -382,7 +382,7 @@ internal class PublisherControllerTest {
             whenever(publisherService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -430,7 +430,7 @@ internal class PublisherControllerTest {
             whenever(publisherService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 

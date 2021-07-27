@@ -63,6 +63,6 @@ class AuthorService(
 
     private fun findEntityById(id: UUID): AuthorEntity {
         return authorRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id.toString()) }
     }
 }

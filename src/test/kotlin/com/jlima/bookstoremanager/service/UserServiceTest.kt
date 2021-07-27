@@ -133,7 +133,7 @@ internal class UserServiceTest {
         fun `It should throw BusinessEntityExistsException when id is not found`() {
             // Arrange
             val (sut, userRepository, _, _, userId) = makeSut()
-            val expectedError = "${AvailableEntities.USER} with id $userId not found."
+            val expectedError = "${AvailableEntities.USER} $userId not found."
             whenever(userRepository.findById(userId)).thenReturn(Optional.empty())
 
             // Act
@@ -214,7 +214,7 @@ internal class UserServiceTest {
             // Arrange
             val (sut, userRepository, userDTO, _, _, passwordEncoder) = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedMessage = "${AvailableEntities.USER} with id $nonExistingId not found."
+            val expectedMessage = "${AvailableEntities.USER} $nonExistingId not found."
 
             whenever(userRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
@@ -290,7 +290,7 @@ internal class UserServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedMessage = "${AvailableEntities.USER} with id $nonExistingId not found."
+            val expectedMessage = "${AvailableEntities.USER} $nonExistingId not found."
             whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act

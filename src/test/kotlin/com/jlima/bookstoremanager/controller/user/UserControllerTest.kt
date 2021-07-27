@@ -161,12 +161,12 @@ class UserControllerTest {
         fun `It should return Status 404 (Not Found) when call with non-existing entity`() {
             // Arrange
             val invalidId = UUID.randomUUID()
-            val expectedResponse = "Entity not found! PUBLISHER with id $invalidId not found. Please check you request."
+            val expectedResponse = "Entity not found! PUBLISHER $invalidId not found. Please check you request."
 
             whenever(userService.findById(invalidId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.PUBLISHER,
-                    id = invalidId
+                    identifier = invalidId.toString()
                 )
             )
 
@@ -338,7 +338,7 @@ class UserControllerTest {
             whenever(userService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.USER,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -388,7 +388,7 @@ class UserControllerTest {
             whenever(userService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -436,7 +436,7 @@ class UserControllerTest {
             whenever(userService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 

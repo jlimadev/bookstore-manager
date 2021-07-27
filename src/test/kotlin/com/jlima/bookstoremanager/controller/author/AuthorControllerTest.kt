@@ -169,7 +169,7 @@ class AuthorControllerTest {
             whenever(authorService.findById(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -362,7 +362,7 @@ class AuthorControllerTest {
             whenever(authorService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -413,7 +413,7 @@ class AuthorControllerTest {
             whenever(authorService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -461,7 +461,7 @@ class AuthorControllerTest {
             whenever(authorService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 

@@ -60,6 +60,6 @@ class PublisherService(
 
     private fun findEntityById(id: UUID): PublisherEntity {
         return publisherRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.PUBLISHER, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.PUBLISHER, id.toString()) }
     }
 }

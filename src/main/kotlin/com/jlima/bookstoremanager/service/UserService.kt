@@ -73,7 +73,7 @@ class UserService(
 
     private fun findEntityById(id: UUID): UserEntity {
         return userRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, id.toString()) }
     }
 
     private fun checkEmailExists(email: String) {

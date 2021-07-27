@@ -107,7 +107,7 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val randomId = UUID.randomUUID()
-            val expectedErrorMessage = "${AvailableEntities.AUTHOR} with id $randomId not found."
+            val expectedErrorMessage = "${AvailableEntities.AUTHOR} $randomId not found."
 
             // Act
             whenever(authorRepository.findById(randomId)).thenReturn(Optional.empty())
@@ -197,7 +197,7 @@ internal class AuthorServiceTest {
             // Arrange
             val sutData = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedMessage = "${AvailableEntities.AUTHOR} with id $nonExistingId not found."
+            val expectedMessage = "${AvailableEntities.AUTHOR} $nonExistingId not found."
 
             whenever(sutData.authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
@@ -239,7 +239,7 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedMessage = "${AvailableEntities.AUTHOR} with id $nonExistingId not found."
+            val expectedMessage = "${AvailableEntities.AUTHOR} $nonExistingId not found."
             whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act
@@ -276,7 +276,7 @@ internal class AuthorServiceTest {
             // Arrange
             val (sut, authorRepository) = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedMessage = "${AvailableEntities.AUTHOR} with id $nonExistingId not found."
+            val expectedMessage = "${AvailableEntities.AUTHOR} $nonExistingId not found."
             whenever(authorRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act
