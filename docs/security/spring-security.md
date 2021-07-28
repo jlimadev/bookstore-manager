@@ -41,8 +41,10 @@ We can create roles to our users:
 - We have to create a class to handle the authenticated users and return the user details. This class must implement
   UserDetails from SpringSecurity.
     - It will retrieve basic information about the user, such as Username, Password, Roles, e more methods.
-
+  
 ```kotlin
+package com.jlima.bookstoremanager.dto
+
 class AuthenticatedUser(
     private val username: String,
     private val password: String,
@@ -65,27 +67,15 @@ class AuthenticatedUser(
         return username
     }
 
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
-
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    // other methods
 }
 ```
 
 ### Authentication Service
 
 ```kotlin
+package com.jlima.bookstoremanager.service.authentication
+
 @Service
 class AuthenticationService(
     private val userRepository: UserRepository
@@ -105,6 +95,8 @@ class AuthenticationService(
 ### Authentication Entrypoint
 
 ```kotlin
+package com.jlima.bookstoremanager.config.security
+
 @Component
 class JwtAuthenticationEntrypoint : AuthenticationEntryPoint {
     override fun commence(
