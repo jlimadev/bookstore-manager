@@ -41,11 +41,11 @@ class JwtTokenManager(
     }
 
     fun validateToken(token: String, userDetails: UserDetails): Boolean {
-        val username = getAllClaimsFromToken(token).subject
+        val username = getClaimsFromToken(token).subject
         return username.equals(userDetails.username) && !isTokenExpired(token)
     }
 
-    private fun getAllClaimsFromToken(token: String): Claims {
+    fun getClaimsFromToken(token: String): Claims {
         return Jwts.parser()
             .setSigningKey(jwtSecret)
             .parseClaimsJws(token)
@@ -53,7 +53,7 @@ class JwtTokenManager(
     }
 
     private fun isTokenExpired(token: String): Boolean {
-        val expirationDate = getAllClaimsFromToken(token).expiration
+        val expirationDate = getClaimsFromToken(token).expiration
         return expirationDate.before(Date.from(Instant.now()))
     }
 }
