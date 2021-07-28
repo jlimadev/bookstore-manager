@@ -28,22 +28,19 @@ class JwtRequestFilter(
         filterChain: FilterChain
     ) {
         val authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_KEY)
-        validateAuthorizationHeader(authorizationHeader)
+        if (validateAuthorizationHeader(authorizationHeader)) {
+            val jwtToken = authorizationHeader.split(" ")[1]
+            val username = jwtTokenManager.getClaimsFromToken(jwtToken).subject
 
-        val jwtToken = authorizationHeader.split(" ")[1]
-        val username = jwtTokenManager.getClaimsFromToken(jwtToken).subject
-
-        if (username != null && SecurityContextHolder.getContext().authentication == null) {
-            addUsernameInContext(request, username, jwtToken)
+            if (username != null && SecurityContextHolder.getContext().authentication == null) {
+                addUsernameInContext(request, username, jwtToken)
+            }
         }
-
         filterChain.doFilter(request, response)
     }
 
-    private fun validateAuthorizationHeader(authorizationHeader: String?) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            throw RuntimeException("Invalid token")
-        }
+    private fun validateAuthorizationHeader(authorizationHeader: String?): Boolean {
+        return authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)
     }
 
     private fun addUsernameInContext(request: HttpServletRequest, username: String, jwtToken: String) {
