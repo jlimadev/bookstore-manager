@@ -9,7 +9,7 @@ implementation("io.jsonwebtoken:jjwt:0.9.1")
 
 ## Password Encryption
 
-With these dependencies we can create an instance of encoder, to encrypt data.
+With these dependencies we can create an instance/bean of encoder, to encrypt data, in this case our password.
 
 ```kotlin
 @Configuration
@@ -24,15 +24,7 @@ class PasswordEncodingConfig {
 
 Since this is a bean, we can inject in any class. In this case our service will receive this bean.
 
-- By doing it, we cannot forget to update our unit tests.
-
-Check `UserService` and `UserServiceTest`.
-
-## User Roles
-
-We can create roles to our users:
-
-- In this project we've added as attribute to user, Role (enum).
+In this project, the `UserService` class receive this encryption by Dependency Injection (and `UserServiceTest`.)
 
 ## Handle with Authenticated Users
 
@@ -93,6 +85,8 @@ class AuthenticationService(
 ```
 
 ### Authentication Entrypoint
+
+This will handle errors of authorization.
 
 ```kotlin
 package com.jlima.bookstoremanager.config.security
