@@ -4,23 +4,18 @@ import com.jlima.bookstoremanager.enums.Role
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig(
     private val jwtAuthenticationEntrypoint: JwtAuthenticationEntrypoint,
-    private val userDetailsService: UserDetailsService,
-    private val passwordEncoder: PasswordEncoder
 ) : WebSecurityConfigurerAdapter() {
     companion object {
         private val ROLE_ADMIN = Role.ADMIN.name
@@ -36,7 +31,8 @@ class WebSecurityConfig(
             "/configuration/ui",
             "/configuration/security",
             "/swagger-resources/**",
-            "/webjars/**"
+            "/webjars/**",
+            "/authenticate"
         )
 
         private val ONLY_ADMIN = arrayOf(
@@ -47,12 +43,6 @@ class WebSecurityConfig(
         private val ALL_AUTHENTICATED = arrayOf(
             "/books/**",
         )
-    }
-
-    fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder) {
-        authenticationManagerBuilder
-            .userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder)
     }
 
     @Bean

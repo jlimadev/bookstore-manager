@@ -29,7 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBeans
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -46,8 +45,7 @@ import java.util.UUID
 @MockBeans(
     MockBean(AuthenticationService::class),
     MockBean(JwtTokenProvider::class),
-    MockBean(JwtAuthenticationEntrypoint::class),
-    MockBean(PasswordEncoder::class)
+    MockBean(JwtAuthenticationEntrypoint::class)
 )
 @WithMockUser(roles = ["ADMIN", "USER"])
 class AuthorControllerTest {
