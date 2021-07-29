@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +34,8 @@ class WebSecurityConfig(
             "/configuration/security",
             "/swagger-resources/**",
             "/webjars/**",
-            "/authenticate"
+            "/authenticate",
+            "/users"
         )
 
         private val ONLY_ADMIN = arrayOf(
@@ -57,19 +60,27 @@ class WebSecurityConfig(
             .antMatchers(*ONLY_ADMIN).hasAnyRole(ROLE_ADMIN)
             .antMatchers(*ALL_AUTHENTICATED).hasAnyRole(ROLE_ADMIN, ROLE_USER)
             .anyRequest().authenticated()
-
         httpSecurity
             .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntrypoint)
-
         httpSecurity
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
         httpSecurity
             .csrf().disable()
             .headers().frameOptions().disable()
+        httpSecurity.cors()
     }
 
     override fun configure(web: WebSecurity) {
         web.ignoring().antMatchers(*AUTH_WHITELIST)
+    }
+
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**")
+                    .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
+            }
+        }
     }
 }
