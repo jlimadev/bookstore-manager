@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.dto
+package com.jlima.bookstoremanager.dto.author
 
 import com.jlima.bookstoremanager.helper.ValidUUID
 import java.util.Date

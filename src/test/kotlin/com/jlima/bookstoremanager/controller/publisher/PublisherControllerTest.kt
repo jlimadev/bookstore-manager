@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.controller.publisher
 
 import com.jlima.bookstoremanager.config.security.JwtAuthenticationEntrypoint
-import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.publisher.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException

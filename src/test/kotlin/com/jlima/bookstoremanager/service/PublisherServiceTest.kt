@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.publisher.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException

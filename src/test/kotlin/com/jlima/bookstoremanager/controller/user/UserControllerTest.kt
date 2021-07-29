@@ -1,8 +1,8 @@
 package com.jlima.bookstoremanager.controller.user
 
 import com.jlima.bookstoremanager.config.security.JwtAuthenticationEntrypoint
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.exception.model.AvailableEntities

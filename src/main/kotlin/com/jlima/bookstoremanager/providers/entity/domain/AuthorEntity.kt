@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
-import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.author.AuthorDTO
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity
 import java.util.Date
 import java.util.UUID

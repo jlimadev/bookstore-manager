@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.controller.author
 
 import com.jlima.bookstoremanager.controller.BaseController
-import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.author.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import io.swagger.annotations.Api

@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.providers.entity.domain
 
-import com.jlima.bookstoremanager.dto.UserDTO
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.providers.entity.AuditableEntity

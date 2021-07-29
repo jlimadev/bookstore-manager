@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.dto
+package com.jlima.bookstoremanager.dto.auth
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

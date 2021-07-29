@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.dto.response
+package com.jlima.bookstoremanager.dto.auth
 
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull

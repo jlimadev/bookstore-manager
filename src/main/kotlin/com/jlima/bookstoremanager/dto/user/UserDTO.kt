@@ -1,4 +1,4 @@
-package com.jlima.bookstoremanager.dto
+package com.jlima.bookstoremanager.dto.user
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jlima.bookstoremanager.enums.Gender

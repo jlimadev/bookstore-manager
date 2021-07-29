@@ -1,8 +1,8 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.dto.response.toPaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityExistsException

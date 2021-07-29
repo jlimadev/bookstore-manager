@@ -1,9 +1,9 @@
 package com.jlima.bookstoremanager.controller.user
 
 import com.jlima.bookstoremanager.controller.BaseController
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.CustomMessageResponse
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.service.UserService
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Pageable

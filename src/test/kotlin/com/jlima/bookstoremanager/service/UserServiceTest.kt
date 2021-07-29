@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
