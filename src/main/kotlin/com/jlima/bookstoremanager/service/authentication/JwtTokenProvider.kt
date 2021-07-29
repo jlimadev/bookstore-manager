@@ -29,7 +29,7 @@ class JwtTokenProvider(
             .setSubject(userDetails.username)
             .setIssuedAt(issuedAt)
             .setExpiration(expirationDate)
-            .signWith(SignatureAlgorithm.ES512, jwtSecret)
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact()
     }
 
