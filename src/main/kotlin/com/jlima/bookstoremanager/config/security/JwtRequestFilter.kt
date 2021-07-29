@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.config.security
 
 import com.jlima.bookstoremanager.service.authentication.AuthenticationService
-import com.jlima.bookstoremanager.service.authentication.JwtTokenManager
+import com.jlima.bookstoremanager.service.authentication.JwtTokenProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class JwtRequestFilter(
     private val authenticationService: AuthenticationService,
-    private val jwtTokenManager: JwtTokenManager
+    private val jwtTokenProvider: JwtTokenProvider
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -30,7 +30,7 @@ class JwtRequestFilter(
         val authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_KEY)
         if (validateAuthorizationHeader(authorizationHeader)) {
             val jwtToken = authorizationHeader.split(" ")[1]
-            val username = jwtTokenManager.getClaimsFromToken(jwtToken).subject
+            val username = jwtTokenProvider.getClaimsFromToken(jwtToken).subject
 
             if (username != null && SecurityContextHolder.getContext().authentication == null) {
                 addUsernameInContext(request, username, jwtToken)
@@ -45,7 +45,7 @@ class JwtRequestFilter(
 
     private fun addUsernameInContext(request: HttpServletRequest, username: String, jwtToken: String) {
         val userDetails = authenticationService.loadUserByUsername(username)
-        if (jwtTokenManager.validateToken(jwtToken, userDetails)) {
+        if (jwtTokenProvider.validateToken(jwtToken, userDetails)) {
             val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.authorities
             )
