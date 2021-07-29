@@ -1,10 +1,10 @@
 package com.jlima.bookstoremanager.service.authentication
 
-import com.jlima.bookstoremanager.dto.AuthenticatedUser
-import com.jlima.bookstoremanager.dto.response.AuthRequest
-import com.jlima.bookstoremanager.dto.response.AuthResponse
-import com.jlima.bookstoremanager.exception.model.AvailableEntities
-import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
+import com.jlima.bookstoremanager.dto.auth.AuthRequest
+import com.jlima.bookstoremanager.dto.auth.AuthResponse
+import com.jlima.bookstoremanager.dto.auth.AuthenticatedUser
+import com.jlima.bookstoremanager.exception.model.BusinessAuthenticationException
+import com.jlima.bookstoremanager.providers.entity.domain.UserEntity
 import com.jlima.bookstoremanager.providers.repository.UserRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -19,8 +19,7 @@ class AuthenticationService(
     private val jwtTokenProvider: JwtTokenProvider
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByEmail(username)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, username) }
+        val user = getUserByUsername(username)
         return AuthenticatedUser(
             username = user.email,
             password = user.password,
@@ -39,6 +38,12 @@ class AuthenticationService(
     }
 
     private fun authenticate(username: String, password: String) {
+        getUserByUsername(username)
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+    }
+
+    private fun getUserByUsername(username: String): UserEntity {
+        return userRepository.findByEmail(username)
+            .orElseThrow { BusinessAuthenticationException("Invalid username or Password") }
     }
 }

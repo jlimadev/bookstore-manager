@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.service.authentication
 
-import com.jlima.bookstoremanager.dto.response.AuthRequest
-import com.jlima.bookstoremanager.dto.response.AuthResponse
+import com.jlima.bookstoremanager.dto.auth.AuthRequest
+import com.jlima.bookstoremanager.dto.auth.AuthResponse
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
