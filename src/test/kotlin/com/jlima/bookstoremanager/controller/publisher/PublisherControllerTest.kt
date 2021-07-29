@@ -1,5 +1,6 @@
 package com.jlima.bookstoremanager.controller.publisher
 
+import com.jlima.bookstoremanager.config.security.JwtAuthenticationEntrypoint
 import com.jlima.bookstoremanager.dto.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
@@ -7,6 +8,8 @@ import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.PublisherService
+import com.jlima.bookstoremanager.service.authentication.AuthenticationService
+import com.jlima.bookstoremanager.service.authentication.JwtTokenProvider
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -23,9 +26,12 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.MockBeans
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -39,6 +45,13 @@ import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(PublisherController::class)
+@MockBeans(
+    MockBean(AuthenticationService::class),
+    MockBean(JwtTokenProvider::class),
+    MockBean(JwtAuthenticationEntrypoint::class),
+    MockBean(PasswordEncoder::class)
+)
+@WithMockUser(roles = ["ADMIN", "USER"])
 internal class PublisherControllerTest {
 
     @Autowired

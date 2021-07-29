@@ -1,5 +1,6 @@
 package com.jlima.bookstoremanager.controller.user
 
+import com.jlima.bookstoremanager.config.security.JwtAuthenticationEntrypoint
 import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.enums.Gender
@@ -10,6 +11,8 @@ import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundExceptio
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.service.UserService
+import com.jlima.bookstoremanager.service.authentication.AuthenticationService
+import com.jlima.bookstoremanager.service.authentication.JwtTokenProvider
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import org.hamcrest.core.Is
@@ -24,9 +27,12 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.MockBeans
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -40,6 +46,13 @@ import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(UserController::class)
+@MockBeans(
+    MockBean(AuthenticationService::class),
+    MockBean(JwtTokenProvider::class),
+    MockBean(JwtAuthenticationEntrypoint::class),
+    MockBean(PasswordEncoder::class)
+)
+@WithMockUser(roles = ["ADMIN", "USER"])
 class UserControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
