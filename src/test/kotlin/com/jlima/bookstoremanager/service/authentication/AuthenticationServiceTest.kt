@@ -29,9 +29,9 @@ import java.util.UUID
 internal class AuthenticationServiceTest {
     private val userRepository: UserRepository = mock()
     private val authenticationManager: AuthenticationManager = mock()
-    private val jwtTokenManager: JwtTokenManager = mock()
+    private val jwtTokenProvider: JwtTokenProvider = mock()
     private val authenticationService =
-        AuthenticationService(userRepository, authenticationManager, jwtTokenManager)
+        AuthenticationService(userRepository, authenticationManager, jwtTokenProvider)
 
     private val userEntity = UserEntity(
         id = UUID.randomUUID(),
@@ -87,7 +87,7 @@ internal class AuthenticationServiceTest {
             val authRequest = AuthRequest(userEntity.email, userEntity.password)
             val expectedToken = AuthResponse(accessToken = "myApplicationToken")
 
-            whenever(jwtTokenManager.generateToken(anyClassOf(UserDetails::class.java))).thenReturn(expectedToken.accessToken)
+            whenever(jwtTokenProvider.generateToken(anyClassOf(UserDetails::class.java))).thenReturn(expectedToken.accessToken)
             whenever(userRepository.findByEmail(authRequest.username)).thenReturn(Optional.of(userEntity))
 
             // Act

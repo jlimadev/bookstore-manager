@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 class AuthenticationService(
     private val userRepository: UserRepository,
     private val authenticationManager: AuthenticationManager,
-    private val jwtTokenManager: JwtTokenManager
+    private val jwtTokenProvider: JwtTokenProvider
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository.findByEmail(username)
@@ -31,7 +31,7 @@ class AuthenticationService(
     fun createJwtToken(authRequest: AuthRequest): AuthResponse {
         authenticate(authRequest.username, authRequest.password)
         val userDetails = loadUserByUsername(authRequest.username)
-        val token = jwtTokenManager.generateToken(userDetails)
+        val token = jwtTokenProvider.generateToken(userDetails)
 
         return AuthResponse(
             accessToken = token

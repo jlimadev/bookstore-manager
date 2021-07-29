@@ -11,7 +11,7 @@ import java.util.Date
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Component
-class JwtTokenManager(
+class JwtTokenProvider(
     @Value("\${jwt.expiresIn}")
     private val jwtExpiresIn: Long,
 
