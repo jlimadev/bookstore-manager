@@ -23,7 +23,6 @@ class UserService(
         checkEmailExists(entity.email)
 
         val userToBeCreated = entity.toEntity()
-        userToBeCreated.password = userToBeCreated.password
 
         return userRepository.save(userToBeCreated).toDTO()
     }
