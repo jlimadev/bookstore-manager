@@ -1,12 +1,10 @@
 package com.jlima.bookstoremanager.exception
 
-import com.jlima.bookstoremanager.exception.model.BusinessAuthenticationException
 import com.jlima.bookstoremanager.exception.model.ExceptionResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
-import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -24,8 +22,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         value = [
             EntityNotFoundException::class,
             EntityExistsException::class,
-            MethodArgumentTypeMismatchException::class,
-            AuthenticationException::class
+            MethodArgumentTypeMismatchException::class
         ]
     )
     fun customExceptionHandler(exception: Exception, request: WebRequest): ResponseEntity<Any> {
@@ -46,10 +43,6 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                 statusCode = HttpStatus.BAD_REQUEST
                 message = "Invalid argument."
                 errorList.add("Field ${exception.name.uppercase()}: ${exception.mostSpecificCause.message}")
-            }
-            is BusinessAuthenticationException -> {
-                statusCode = HttpStatus.UNAUTHORIZED
-                message = "Check your credentials."
             }
             else -> {
                 statusCode = HttpStatus.INTERNAL_SERVER_ERROR

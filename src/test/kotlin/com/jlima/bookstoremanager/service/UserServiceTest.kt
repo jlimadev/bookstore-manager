@@ -28,7 +28,6 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.Instant
 import java.time.Period
 import java.util.Date
@@ -41,14 +40,12 @@ internal class UserServiceTest {
         val userRepository: UserRepository,
         val userDTO: UserDTO,
         val userEntity: UserEntity,
-        val userId: UUID,
-        val passwordEncoder: PasswordEncoder,
+        val userId: UUID
     )
 
     private fun makeSut(): SUT {
         val userRepository: UserRepository = mock()
-        val passwordEncoder: PasswordEncoder = mock()
-        val userService = UserService(userRepository, passwordEncoder)
+        val userService = UserService(userRepository)
         val userId = UUID.randomUUID()
         val userDTO = UserDTO(
             name = "Any Name",
@@ -66,8 +63,7 @@ internal class UserServiceTest {
             userRepository = userRepository,
             userDTO = userDTO,
             userEntity = userEntity,
-            userId = userId,
-            passwordEncoder = passwordEncoder
+            userId = userId
         )
     }
 
@@ -77,10 +73,9 @@ internal class UserServiceTest {
         @Test
         fun `It should create successfully`() {
             // Arrange
-            val (sut, userRepository, userDTO, userEntity, _, passwordEncoder) = makeSut()
+            val (sut, userRepository, userDTO, userEntity) = makeSut()
             val expectedResult = userEntity.toDTO()
             whenever(userRepository.findByEmail(userDTO.email)).thenReturn(Optional.empty())
-            whenever(passwordEncoder.encode(userDTO.password)).thenReturn(userDTO.password)
             whenever(userRepository.save(userDTO.toEntity())).thenReturn(userEntity)
 
             // Act
@@ -90,13 +85,12 @@ internal class UserServiceTest {
             assertEquals(expectedResult, result)
             verify(userRepository, times(1)).findByEmail(userDTO.email)
             verify(userRepository, times(1)).save(userDTO.toEntity())
-            verify(passwordEncoder, times(1)).encode(userDTO.password)
         }
 
         @Test
         fun `It should throw BusinessEntityExistsException when create user with already registered email`() {
             // Arrange
-            val (sut, userRepository, userDTO, userEntity, _, passwordEncoder) = makeSut()
+            val (sut, userRepository, userDTO, userEntity) = makeSut()
             val expectedErrorMessage = "Entity ${AvailableEntities.USER} already exists: ${userDTO.email}"
             whenever(userRepository.findByEmail(userDTO.email)).thenReturn(Optional.of(userEntity))
 
@@ -107,7 +101,6 @@ internal class UserServiceTest {
             assertEquals(expectedErrorMessage, exception.message)
             verify(userRepository, times(1)).findByEmail(userDTO.email)
             verify(userRepository, never()).save(any())
-            verify(passwordEncoder, never()).encode(any())
         }
     }
 
@@ -193,12 +186,11 @@ internal class UserServiceTest {
         @Test
         fun `It should update successfully`() {
             // Arrange
-            val (sut, userRepository, userDTO, userEntity, userId, passwordEncoder) = makeSut()
+            val (sut, userRepository, userDTO, userEntity, userId) = makeSut()
             val updatedDTO = userDTO.copy(name = "Updated name")
             val updatedEntity = userEntity.copy(name = updatedDTO.name)
             val expectedResult = updatedEntity.toDTO().copy(id = userId.toString())
             whenever(userRepository.findById(userId)).thenReturn(Optional.of(userEntity))
-            whenever(passwordEncoder.encode(userDTO.password)).thenReturn(userDTO.password)
             whenever(userRepository.save(updatedEntity)).thenReturn(updatedEntity)
 
             // Act
@@ -206,13 +198,12 @@ internal class UserServiceTest {
 
             // Assert
             assertEquals(expectedResult, result)
-            verify(passwordEncoder, times(1)).encode(userDTO.password)
         }
 
         @Test
         fun `It should throw BusinessEntityNotFoundException when call update and it returns an empty response`() {
             // Arrange
-            val (sut, userRepository, userDTO, _, _, passwordEncoder) = makeSut()
+            val (sut, userRepository, userDTO) = makeSut()
             val nonExistingId = UUID.randomUUID()
             val expectedMessage = "${AvailableEntities.USER} $nonExistingId not found."
 
@@ -227,7 +218,6 @@ internal class UserServiceTest {
             assertEquals(expectedMessage, exception.message)
             verify(userRepository, times(1)).findById(nonExistingId)
             verify(userRepository, never()).save(any())
-            verify(passwordEncoder, never()).encode(any())
         }
     }
 

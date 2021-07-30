@@ -1,6 +1,5 @@
 package com.jlima.bookstoremanager.controller.author
 
-import com.jlima.bookstoremanager.config.security.JwtAuthenticationEntrypoint
 import com.jlima.bookstoremanager.dto.author.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
@@ -8,8 +7,6 @@ import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityNotFoundException
 import com.jlima.bookstoremanager.helper.toJson
 import com.jlima.bookstoremanager.service.AuthorService
-import com.jlima.bookstoremanager.service.authentication.AuthenticationService
-import com.jlima.bookstoremanager.service.authentication.JwtTokenProvider
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.core.Is
@@ -25,11 +22,9 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.MockBeans
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -42,12 +37,12 @@ import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(AuthorController::class)
-@MockBeans(
-    MockBean(AuthenticationService::class),
-    MockBean(JwtTokenProvider::class),
-    MockBean(JwtAuthenticationEntrypoint::class)
-)
-@WithMockUser(roles = ["ADMIN", "USER"])
+// @MockBeans(
+//    MockBean(AuthenticationService::class),
+//    MockBean(JwtTokenProvider::class),
+//    MockBean(JwtAuthenticationEntrypoint::class)
+// )
+// @WithMockUser(roles = ["ADMIN", "USER"])
 class AuthorControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc

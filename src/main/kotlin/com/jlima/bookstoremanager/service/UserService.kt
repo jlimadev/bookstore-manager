@@ -12,20 +12,18 @@ import com.jlima.bookstoremanager.providers.entity.domain.toDTO
 import com.jlima.bookstoremanager.providers.entity.domain.toEntity
 import com.jlima.bookstoremanager.providers.repository.UserRepository
 import org.springframework.data.domain.Pageable
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class UserService(
-    private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val userRepository: UserRepository
 ) : CrudService<UserDTO> {
     override fun create(entity: UserDTO): UserDTO {
         checkEmailExists(entity.email)
 
         val userToBeCreated = entity.toEntity()
-        userToBeCreated.password = passwordEncoder.encode(userToBeCreated.password)
+        userToBeCreated.password = userToBeCreated.password
 
         return userRepository.save(userToBeCreated).toDTO()
     }
@@ -52,7 +50,7 @@ class UserService(
         user.gender = entity.gender
         user.birthDate = entity.birthDate
         user.email = entity.email
-        user.password = passwordEncoder.encode(entity.password)
+        user.password = entity.password
         user.role = entity.role
 
         return userRepository.save(user).toDTO()
