@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.publisher.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
@@ -107,7 +107,7 @@ internal class PublisherServiceTest {
             // Arrange
             val (sut, publisherRepository) = makeSut()
             val randomId = UUID.randomUUID()
-            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} with id $randomId not found."
+            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} $randomId not found."
             whenever(publisherRepository.findById(randomId)).thenReturn(Optional.empty())
 
             // Act
@@ -190,7 +190,7 @@ internal class PublisherServiceTest {
             // Arrange
             val (sut, publisherRepository, defaultDTO) = makeSut()
             val nonExistingId = UUID.randomUUID()
-            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} with id $nonExistingId not found."
+            val expectedErrorMessage = "${AvailableEntities.PUBLISHER} $nonExistingId not found."
             whenever(publisherRepository.findById(nonExistingId)).thenReturn(Optional.empty())
 
             // Act

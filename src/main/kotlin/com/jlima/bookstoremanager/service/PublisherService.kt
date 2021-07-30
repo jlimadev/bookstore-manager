@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.PublisherDTO
+import com.jlima.bookstoremanager.dto.publisher.PublisherDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.dto.response.toPaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
@@ -60,6 +60,6 @@ class PublisherService(
 
     private fun findEntityById(id: UUID): PublisherEntity {
         return publisherRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.PUBLISHER, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.PUBLISHER, id.toString()) }
     }
 }

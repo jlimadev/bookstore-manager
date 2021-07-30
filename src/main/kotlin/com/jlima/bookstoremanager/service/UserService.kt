@@ -1,8 +1,8 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.dto.response.toPaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
 import com.jlima.bookstoremanager.exception.model.BusinessEntityExistsException
@@ -21,7 +21,10 @@ class UserService(
 ) : CrudService<UserDTO> {
     override fun create(entity: UserDTO): UserDTO {
         checkEmailExists(entity.email)
-        return userRepository.save(entity.toEntity()).toDTO()
+
+        val userToBeCreated = entity.toEntity()
+
+        return userRepository.save(userToBeCreated).toDTO()
     }
 
     override fun findById(id: UUID): UserDTO {
@@ -67,7 +70,7 @@ class UserService(
 
     private fun findEntityById(id: UUID): UserEntity {
         return userRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.USER, id.toString()) }
     }
 
     private fun checkEmailExists(email: String) {

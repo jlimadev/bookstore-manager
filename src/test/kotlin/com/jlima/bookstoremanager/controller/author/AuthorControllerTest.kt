@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.controller.author
 
-import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.author.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
 import com.jlima.bookstoremanager.exception.model.BusinessEmptyResponseException
@@ -37,6 +37,12 @@ import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(AuthorController::class)
+// @MockBeans(
+//    MockBean(AuthenticationService::class),
+//    MockBean(JwtTokenProvider::class),
+//    MockBean(JwtAuthenticationEntrypoint::class)
+// )
+// @WithMockUser(roles = ["ADMIN", "USER"])
 class AuthorControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -79,8 +85,11 @@ class AuthorControllerTest {
                 .post("/authors") {
                     contentType = MediaType.APPLICATION_JSON
                     content = defaultDTO.toJson()
+//                    with(user("admin").password("pass").roles("USER","ADMIN"))
                 }
-                .andDo { print() }
+                .andDo {
+                    print()
+                }
                 .andExpect {
                     status { isCreated() }
                     content { contentType(MediaType.APPLICATION_JSON) }
@@ -169,7 +178,7 @@ class AuthorControllerTest {
             whenever(authorService.findById(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -362,7 +371,7 @@ class AuthorControllerTest {
             whenever(authorService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -413,7 +422,7 @@ class AuthorControllerTest {
             whenever(authorService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -461,7 +470,7 @@ class AuthorControllerTest {
             whenever(authorService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 

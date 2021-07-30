@@ -1,6 +1,6 @@
 package com.jlima.bookstoremanager.service
 
-import com.jlima.bookstoremanager.dto.AuthorDTO
+import com.jlima.bookstoremanager.dto.author.AuthorDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
 import com.jlima.bookstoremanager.dto.response.toPaginationResponse
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
@@ -63,6 +63,6 @@ class AuthorService(
 
     private fun findEntityById(id: UUID): AuthorEntity {
         return authorRepository.findById(id)
-            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id) }
+            .orElseThrow { BusinessEntityNotFoundException(AvailableEntities.AUTHOR, id.toString()) }
     }
 }

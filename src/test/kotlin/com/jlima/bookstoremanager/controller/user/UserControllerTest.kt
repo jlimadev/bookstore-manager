@@ -1,7 +1,7 @@
 package com.jlima.bookstoremanager.controller.user
 
-import com.jlima.bookstoremanager.dto.UserDTO
 import com.jlima.bookstoremanager.dto.response.PaginationResponse
+import com.jlima.bookstoremanager.dto.user.UserDTO
 import com.jlima.bookstoremanager.enums.Gender
 import com.jlima.bookstoremanager.enums.Role
 import com.jlima.bookstoremanager.exception.model.AvailableEntities
@@ -40,6 +40,12 @@ import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(UserController::class)
+/*@MockBeans(
+    MockBean(AuthenticationService::class),
+    MockBean(JwtTokenProvider::class),
+    MockBean(JwtAuthenticationEntrypoint::class)
+)
+@WithMockUser(roles = ["ADMIN", "USER"])*/
 class UserControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -161,12 +167,12 @@ class UserControllerTest {
         fun `It should return Status 404 (Not Found) when call with non-existing entity`() {
             // Arrange
             val invalidId = UUID.randomUUID()
-            val expectedResponse = "Entity not found! PUBLISHER with id $invalidId not found. Please check you request."
+            val expectedResponse = "Entity not found! PUBLISHER $invalidId not found. Please check you request."
 
             whenever(userService.findById(invalidId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.PUBLISHER,
-                    id = invalidId
+                    identifier = invalidId.toString()
                 )
             )
 
@@ -338,7 +344,7 @@ class UserControllerTest {
             whenever(userService.update(nonExistingId, defaultDTO)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.USER,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -388,7 +394,7 @@ class UserControllerTest {
             whenever(userService.delete(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
@@ -436,7 +442,7 @@ class UserControllerTest {
             whenever(userService.deleteSoft(nonExistingId)).thenThrow(
                 BusinessEntityNotFoundException(
                     entity = AvailableEntities.AUTHOR,
-                    id = nonExistingId
+                    identifier = nonExistingId.toString()
                 )
             )
 
